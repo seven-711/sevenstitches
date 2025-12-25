@@ -1,0 +1,151 @@
+import '../style.css';
+import '../components/header';
+import { ProductService } from '../services/product.service';
+import { CartState } from '../state/cart';
+import { Toast } from '../components/toast';
+
+// Ensure header is registered
+if (!customElements.get('app-header')) {
+    import('../components/header').then(({ AppHeader }) => {
+        if (!customElements.get('app-header')) {
+            customElements.define('app-header', AppHeader);
+        }
+    });
+}
+
+const container = document.getElementById('product-container');
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
+
+(async () => {
+    if (container && productId) {
+        try {
+            const product = await ProductService.getProductById(productId);
+
+            if (product) {
+                const images = product.images && product.images.length > 0 ? product.images : [];
+                const mainImageSrc = images.length > 0 ? images[0] : null;
+
+                // Main Image HTML
+                const mainImageHtml = mainImageSrc
+                    ? `<img id="main-image" src="${mainImageSrc}" alt="${product.name}" class="w-full h-full object-cover transition-opacity duration-300" />`
+                    : `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-400">
+                           <span class="material-symbols-outlined text-6xl">inventory_2</span>
+                       </div>`;
+
+                // Thumbnails HTML
+                let thumbnailsHtml = '';
+                if (images.length > 1) {
+                    thumbnailsHtml = `
+                        <div class="flex gap-4 mt-6 overflow-x-auto pb-2 scrollbar-hide">
+                            ${images.map((src, index) => `
+                                <button class="thumbnail-btn relative w-20 h-24 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${index === 0 ? 'border-primary' : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'}" 
+                                    data-src="${src}" aria-label="View image ${index + 1}">
+                                    <img src="${src}" alt="Thumbnail ${index + 1}" class="w-full h-full object-cover" />
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-8 lg:gap-16">
+                        <!-- Image Gallery -->
+                        <div class="w-full md:w-1/2">
+                            <div class="aspect-[4/5] w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-slate-800 shadow-xl relative">
+                                ${mainImageHtml}
+                            </div>
+                            ${thumbnailsHtml}
+                        </div>
+                        
+                        <!-- Details -->
+                        <div class="w-full md:w-1/2 flex flex-col justify-center">
+                            <div class="mb-6">
+                                <span class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+                                    ${(product as any).categories?.name || 'Product'}
+                                </span>
+                                <h1 class="text-3xl md:text-5xl font-black leading-tight mb-4 text-gray-900 dark:text-white">${product.name}</h1>
+                                <p class="text-2xl font-bold text-primary">₱${Number(product.price).toFixed(2)}</p>
+                                <div class="mt-2 text-sm">
+                                    <span class="${(product.inventory_count || 0) < 5 ? 'text-red-500 font-bold' : 'text-gray-500'}">
+                                        ${product.inventory_count || 0} in stock
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
+                                ${product.description || 'No description available.'}
+                            </p>
+                            
+                            <div class="flex gap-4">
+                                <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-12 px-4 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
+                                     <input type="number" id="quantity" value="1" min="1" class="w-12 bg-transparent border-none text-center focus:ring-0 p-0" />
+                                </div>
+                                <button id="add-to-cart" class="flex-1 h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-full shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined">shopping_cart</span>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Event Listeners
+                const addToCartBtn = document.getElementById('add-to-cart');
+                const quantityInput = document.getElementById('quantity') as HTMLInputElement;
+                const mainImage = document.getElementById('main-image') as HTMLImageElement;
+                const thumbnailBtns = document.querySelectorAll('.thumbnail-btn');
+
+                // Thumbnail Click Logic
+                thumbnailBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const newSrc = btn.getAttribute('data-src');
+                        if (newSrc && mainImage) {
+                            // Update Main Image
+                            // Update Main Image
+                            mainImage.style.opacity = '0';
+                            // Wait for fade out to complete (matches duration-300)
+                            setTimeout(() => {
+                                mainImage.src = newSrc;
+                                mainImage.style.opacity = '1';
+                            }, 300);
+
+                            // Update Thumbnail Styling
+                            thumbnailBtns.forEach(b => {
+                                b.classList.remove('border-primary');
+                                b.classList.add('border-transparent');
+                            });
+                            btn.classList.remove('border-transparent');
+                            btn.classList.add('border-primary');
+                        }
+                    });
+                });
+
+                addToCartBtn?.addEventListener('click', () => {
+                    const qty = parseInt(quantityInput.value) || 1;
+                    CartState.addItem(product, qty);
+                    Toast.show('Added to cart!', 'success');
+                });
+
+
+            } else {
+                renderNotFound();
+            }
+        } catch (e) {
+            console.error(e);
+            renderNotFound();
+        }
+    } else if (container) {
+        renderNotFound('Product ID Missing');
+    }
+})();
+
+function renderNotFound(message = 'Product Not Found') {
+    if (!container) return;
+    container.innerHTML = `
+        <div class="text-center py-20">
+            <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">${message}</h2>
+            <a href="/pages/shop.html" class="text-primary hover:underline">Back to Shop</a>
+        </div>
+    `;
+}

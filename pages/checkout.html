@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Seven Stitches - Checkout</title>
+    <link rel="icon" type="image/png" href="/favicon-circle.png" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Theme Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb",
+                        "primary-dark": "#1d4ed8",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-main": "#0f172a",
+                        "text-main-dark": "#e2e8f0",
+                        "text-muted": "#64748b",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col text-text-main dark:text-text-main-dark transition-colors duration-300">
+    <!-- Header -->
+    <header
+        class="sticky top-0 z-50 w-full bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-md border-b border-border-light dark:border-border-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="size-8 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-3xl">gesture</span>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">Seven Stitches</h1>
+                </div>
+                <!-- Trust Indicator -->
+                <div class="flex items-center gap-2 text-text-muted text-sm font-medium">
+                    <span class="material-symbols-outlined text-lg">lock</span>
+                    <span class="hidden sm:inline">Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 pb-96 lg:pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+            <!-- Left Column: Forms -->
+            <div class="lg:col-span-7 flex flex-col gap-10">
+                <!-- Auth Selection (Initially Visible if not logged in) -->
+                <div id="auth-selection-container" class="flex flex-col gap-6 max-w-lg mx-auto py-10">
+                    <h2 class="text-2xl font-bold text-center mb-4">How would you like to check out?</h2>
+
+                    <!-- Guest Option -->
+                    <div
+                        class="p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="material-symbols-outlined text-3xl text-primary">person_outline</span>
+                            <div>
+                                <h3 class="font-bold text-lg">Guest Checkout</h3>
+                                <p class="text-sm text-text-muted">No account required. Fast and easy.</p>
+                            </div>
+                        </div>
+                        <button id="guest-checkout-btn"
+                            class="w-full bg-white dark:bg-gray-800 border-2 border-primary text-primary font-bold py-3 rounded-full hover:bg-primary hover:text-white transition-all">
+                            Continue as Guest
+                        </button>
+                    </div>
+
+                    <!-- Login Option -->
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-border-light dark:border-border-dark"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-background-light dark:bg-background-dark text-text-muted">Or</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="material-symbols-outlined text-3xl text-primary">account_circle</span>
+                            <div>
+                                <h3 class="font-bold text-lg">Login / Sign Up</h3>
+                                <p class="text-sm text-text-muted">Save your details and track your order.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="login-btn"
+                                class="flex-1 bg-primary text-white font-bold py-3 rounded-full shadow-lg hover:shadow-primary/30 transition-all">
+                                Log In
+                            </button>
+                            <button id="signup-btn"
+                                class="flex-1 bg-white dark:bg-gray-800 border-2 border-primary text-primary font-bold py-3 rounded-full hover:bg-primary hover:text-white transition-all">
+                                Sign Up
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Checkout Form (Initially Hidden) -->
+                <div id="checkout-form-container" class="hidden flex flex-col gap-10">
+                    <!-- Breadcrumbs -->
+                    <nav class="flex items-center gap-2 text-sm font-medium">
+                        <a class="text-text-muted hover:text-primary transition-colors flex items-center gap-1"
+                            href="/pages/cart.html">
+                            <span class="material-symbols-outlined text-lg">shopping_cart</span>
+                            Cart
+                        </a>
+                        <span class="material-symbols-outlined text-text-muted text-base">chevron_right</span>
+                        <span class="text-primary font-bold">Delivery &amp; Payment</span>
+                        <span class="material-symbols-outlined text-text-muted text-base">chevron_right</span>
+                        <span class="text-text-muted">Confirmation</span>
+                    </nav>
+                    <!-- Section 1: Delivery Details -->
+                    <section>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="flex items-center justify-center size-8 rounded-full bg-primary text-white font-bold text-sm">
+                                1</div>
+                            <h2 class="text-2xl font-bold">Delivery Details</h2>
+                        </div>
+                        <form class="space-y-6">
+                            <!-- Full Name -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium ml-1" for="fullName">Full Name</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">person</span>
+                                    <input
+                                        class="w-full pl-12 pr-4 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                        id="fullName" placeholder="Jane Doe" type="text" />
+                                </div>
+                            </div>
+                            <!-- Email Address -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium ml-1" for="email">Email Address</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">mail</span>
+                                    <input
+                                        class="w-full pl-12 pr-4 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                        id="email" placeholder="jane@example.com" type="email" />
+                                </div>
+                            </div>
+                            <!-- Address -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium ml-1" for="address">Street Address</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">home</span>
+                                    <input
+                                        class="w-full pl-12 pr-4 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                        id="address" placeholder="123 Crochet Lane" type="text" />
+                                </div>
+                            </div>
+                            <!-- City, State, Zip Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium ml-1" for="city">City/Municipality</label>
+                                    <div class="relative">
+                                        <select
+                                            class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none text-text-muted cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                            id="city" disabled>
+                                            <option value="">Select State first...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium ml-1" for="state">State/Province</label>
+                                    <div class="relative">
+                                        <select
+                                            class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none text-text-muted cursor-pointer"
+                                            id="state">
+                                            <option value="">Select Province...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium ml-1" for="zip">Postal Code
+                                        (4-digits)</label>
+                                    <input
+                                        class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                        id="zip" placeholder="10001" type="text" />
+                                </div>
+                            </div>
+                            <!-- Phone -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium ml-1" for="phone">Phone Number</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">call</span>
+                                    <input
+                                        class="w-full pl-12 pr-4 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                        id="phone" placeholder="(555) 123-4567" type="tel" />
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                    <hr class="border-border-light dark:border-border-dark" />
+                    <!-- Section 2: Payment Method -->
+                    <section>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="flex items-center justify-center size-8 rounded-full bg-primary text-white font-bold text-sm">
+                                2</div>
+                            <h2 class="text-2xl font-bold">Payment Method</h2>
+                        </div>
+                        <p class="text-text-muted mb-4 text-sm">Choose how you want to pay</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Option 1: Pay Online -->
+                            <label
+                                class="relative flex flex-col p-5 bg-surface-light dark:bg-surface-dark border-2 border-transparent has-[:checked]:border-primary has-[:checked]:bg-primary/5 rounded-xl cursor-pointer shadow-sm hover:shadow-md transition-all group">
+                                <input checked="" class="peer sr-only" id="payment-online" name="paymentMethod"
+                                    type="radio" value="online" />
+                                <div
+                                    class="absolute top-5 right-5 text-primary opacity-0 peer-checked:opacity-100 transition-opacity">
+                                    <span class="material-symbols-outlined fill-current">check_circle</span>
+                                </div>
+                                <div class="mb-3 p-3 bg-primary/10 w-fit rounded-full text-primary">
+                                    <span class="material-symbols-outlined text-2xl">credit_card</span>
+                                </div>
+                                <span class="font-bold text-lg mb-1">Pay Online</span>
+                                <span class="text-sm text-text-muted">Credit/Debit Card, PayPal</span>
+                            </label>
+                            <!-- Option 2: Pay on Delivery -->
+                            <label
+                                class="relative flex flex-col p-5 bg-surface-light dark:bg-surface-dark border-2 border-transparent has-[:checked]:border-primary has-[:checked]:bg-primary/5 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-primary/50 transition-all group">
+                                <input class="peer sr-only" id="payment-cod" name="paymentMethod" type="radio"
+                                    value="cod" />
+                                <div
+                                    class="absolute top-5 right-5 text-primary opacity-0 peer-checked:opacity-100 transition-opacity">
+                                    <span class="material-symbols-outlined fill-current">check_circle</span>
+                                </div>
+                                <div class="mb-3 p-3 bg-gray-100 dark:bg-gray-800 w-fit rounded-full text-text-muted">
+                                    <span class="material-symbols-outlined text-2xl">local_shipping</span>
+                                </div>
+                                <span class="font-bold text-lg mb-1">Pay on Delivery</span>
+                                <span class="text-sm text-text-muted">Pay with Cash/Card upon receipt</span>
+                            </label>
+                        </div>
+                        <!-- Credit Card Details (Conditional) -->
+                        <div id="card-details-section"
+                            class="mt-6 p-6 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl space-y-4 transition-all duration-300 overflow-hidden">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium">Card Details</span>
+                                <div class="flex gap-2">
+                                    <div class="w-8 h-5 bg-gray-200 rounded overflow-hidden" data-alt="Visa Logo"></div>
+                                    <div class="w-8 h-5 bg-gray-200 rounded overflow-hidden" data-alt="Mastercard Logo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <input
+                                    class="w-full px-5 h-12 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-muted/50"
+                                    placeholder="Card Number" type="text" />
+                                <div class="grid grid-cols-2 gap-4">
+                                    <input
+                                        class="w-full px-5 h-12 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-muted/50"
+                                        placeholder="MM/YY" type="text" />
+                                    <input
+                                        class="w-full px-5 h-12 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text-muted/50"
+                                        placeholder="CVC" type="text" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Summary (Sticky) -->
+            <div class="lg:col-span-5 relative">
+                <div class="lg:sticky top-24 space-y-6">
+                    <div
+                        class="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 lg:p-8 shadow-sm">
+                        <h3 class="text-xl font-bold mb-6">Order Summary</h3>
+                        <div class="space-y-6 mb-8" id="order-summary-items">
+                            <!-- Items will be populated by checkout.ts -->
+                            <div class="text-center text-text-muted py-4">Loading cart items...</div>
+                        </div>
+                        <hr class="border-border-light dark:border-border-dark border-dashed mb-6" />
+                        <!-- Discount Code -->
+                        <div class="flex flex-col gap-2 mb-8" id="coupon-input-container">
+                            <div class="flex gap-2">
+                                <input id="coupon-code-input"
+                                    class="flex-1 px-5 h-10 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-text-muted/50 uppercase"
+                                    placeholder="Promo Code" type="text" />
+                                <button id="apply-coupon-btn"
+                                    class="h-10 px-5 rounded-full bg-text-main dark:bg-white text-white dark:text-text-main text-sm font-bold hover:opacity-90 transition-opacity">Apply</button>
+                            </div>
+                            <p id="coupon-message" class="text-xs min-h-[1.25em]"></p>
+                        </div>
+                        <!-- Calculations -->
+                        <div class="space-y-3 text-sm mb-8">
+                            <div class="flex justify-between text-text-muted">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-text-muted">
+                                <span>Shipping</span>
+                                <span class="text-green-600 dark:text-green-400 font-medium">Free</span>
+                            </div>
+                            <div class="flex justify-between text-text-muted">
+                                <span>Tax</span>
+                                <span id="summary-tax">$0.00</span>
+                            </div>
+                            <div
+                                class="flex justify-between text-lg font-bold pt-3 border-t border-border-light dark:border-border-dark text-text-main dark:text-text-main-dark">
+                                <span>Total</span>
+                                <span id="summary-total">$0.00</span>
+                            </div>
+                        </div>
+                        <!-- CTA Button -->
+                        <button id="place-order-btn"
+                            class="w-full h-14 bg-primary hover:bg-primary-dark text-white text-base font-bold rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                            <span>Place Order</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                        <p class="text-center text-xs text-text-muted mt-4">
+                            By placing your order, you agree to our <a class="underline hover:text-primary"
+                                href="#">Terms of Service</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="/src/pages/checkout.ts"></script>
+</body>
+
+</html>
