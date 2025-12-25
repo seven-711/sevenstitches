@@ -75,3 +75,17 @@ function renderCart() {
 };
 
 renderCart();
+
+// Proceed to Checkout Validation
+const proceedBtn = document.getElementById('proceed-to-checkout-btn');
+if (proceedBtn) {
+    proceedBtn.addEventListener('click', (e) => {
+        const items = CartState.getItems();
+        if (items.length === 0) {
+            e.preventDefault();
+            import('../components/toast').then(({ Toast }) => {
+                Toast.show("Your cart is empty. Please add items before proceeding.", "error");
+            });
+        }
+    });
+}

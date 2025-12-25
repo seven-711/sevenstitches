@@ -39,7 +39,10 @@ function renderOrderSummary() {
     if (itemsContainer) {
         if (items.length === 0) {
             itemsContainer.innerHTML = '<p class="text-center text-text-muted">Your cart is empty.</p>';
-            if (placeOrderBtn) (placeOrderBtn as HTMLButtonElement).disabled = true;
+            if (placeOrderBtn) {
+                // We keep it enabled to show the error toast when clicked
+                (placeOrderBtn as HTMLButtonElement).disabled = false;
+            }
         } else {
             itemsContainer.innerHTML = items.map(item => {
                 const imageSrc = item.images?.[0] || '';
@@ -249,6 +252,13 @@ if (paymentOnlineBtn && paymentCodBtn) {
 
 if (placeOrderBtn) {
     placeOrderBtn.addEventListener('click', async () => {
+        // Empty Cart Validation
+        const items = CartService.getItems();
+        if (items.length === 0) {
+            Toast.show("Your cart is empty. Please add items before placing an order.", "error");
+            return;
+        }
+
         // Gather Data
         const formData = {
             fullName: (document.getElementById('fullName') as HTMLInputElement)?.value,
