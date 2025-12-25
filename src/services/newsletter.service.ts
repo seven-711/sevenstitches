@@ -1,5 +1,5 @@
 export class NewsletterService {
-    private static API_URL = 'http://localhost:3000/api/subscribe';
+    private static API_URL = '/api/subscribe';
 
     static async subscribe(email: string): Promise<{ success: boolean; message: string }> {
         try {

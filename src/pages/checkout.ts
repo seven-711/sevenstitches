@@ -1,8 +1,8 @@
 import '../style.css';
 import { AuthService } from '../services/auth.service';
 import { clerk } from '../lib/clerk';
-import { CheckoutService, OrderDetails } from '../services/checkout.service.ts';
-import { CartService } from '../services/cart.service.ts';
+import { CheckoutService, OrderDetails } from '../services/checkout.service';
+import { CartService } from '../services/cart.service';
 import { Toast } from '../components/toast';
 import { z } from 'zod';
 // Remove phLocations import
@@ -141,7 +141,7 @@ function setupCouponListeners() {
             (applyBtn as HTMLButtonElement).disabled = true;
 
             try {
-                const res = await fetch('http://localhost:3000/api/validate-coupon', {
+                const res = await fetch('/api/validate-coupon', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ code })
@@ -253,7 +253,9 @@ if (paymentOnlineBtn && paymentCodBtn) {
 if (placeOrderBtn) {
     placeOrderBtn.addEventListener('click', async () => {
         // Empty Cart Validation
+        // Empty Cart Validation
         const items = CartService.getItems();
+        console.log('Cart Items on Checkout:', items);
         if (items.length === 0) {
             Toast.show("Your cart is empty. Please add items before placing an order.", "error");
             return;
@@ -316,7 +318,7 @@ if (placeOrderBtn) {
         }
 
         try {
-            await fetch('http://localhost:3000/api/confirm-order', {
+            await fetch('/api/confirm-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

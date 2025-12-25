@@ -218,6 +218,12 @@ app.post('/api/confirm-order', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+// Export for Vercel
+module.exports = app;
+
+// Only listen if run directly (local development)
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
