@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Seven Stitches - Handmade Warmth</title>
+  <link rel="icon" type="image/png" href="/favicon-circle.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#2563eb",
+            "background-light": "#f8fafc",
+            "background-dark": "#0f172a",
+          },
+          fontFamily: {
+            "display": ["Be Vietnam Pro", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <script type="module" crossorigin src="/assets/main-CVq9kgxh.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/supabase-w99FfbcE.js">
+  <link rel="modulepreload" crossorigin href="/assets/auth.service-B-BoZdmw.js">
+  <link rel="modulepreload" crossorigin href="/assets/toast-CErdx8Qf.js">
+  <link rel="modulepreload" crossorigin href="/assets/category.service-ILwE1iue.js">
+  <link rel="modulepreload" crossorigin href="/assets/header-BXuXbyNE.js">
+  <link rel="modulepreload" crossorigin href="/assets/product.service-oboCqACv.js">
+  <link rel="stylesheet" crossorigin href="/assets/style-tn0RQdqM.css">
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark text-[#0f172a] dark:text-[#e2e8f0]">
+  <app-header></app-header>
+  <main class="flex flex-col items-center w-full">
+    <!-- Hero Section -->
+    <div class="w-full max-w-[1440px] px-4 md:px-10 pt-2 pb-8 lg:pt-6 lg:pb-16">
+      <div class="@container">
+        <div class="flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
+          <div class="flex flex-col gap-6 lg:w-1/2 lg:pr-12">
+            <div class="flex flex-col gap-4">
+              <div id="hero-badge"
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 w-fit transition-colors duration-300">
+                <span id="hero-badge-icon"
+                  class="material-symbols-outlined text-primary text-sm transition-colors duration-300">stars</span>
+                <span id="hero-badge-text"
+                  class="text-primary text-xs font-bold uppercase tracking-wider transition-colors duration-300">New
+                  Collection</span>
+              </div>
+              <h1 id="hero-title"
+                class="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight transition-colors duration-300">
+                Handmade, <br />
+                <span id="hero-highlight-text" class="text-primary transition-colors duration-300">Stitch by
+                  7stitches</span>
+              </h1>
+              <p id="hero-description"
+                class="text-base text-[#0f172a]/70 dark:text-[#e2e8f0]/70 leading-relaxed max-w-lg">
+                Discover unique crochet patterns for makers and finished handmade goods for warmth seekers. Crafted with
+                premium cotton yarn.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-4 mt-2">
+              <a id="hero-shop-btn" href="/pages/shop.html"
+                class="flex h-12 items-center justify-center rounded-full px-8 bg-primary hover:bg-primary/90 text-white text-base font-bold transition-all shadow-lg shadow-primary/30">
+                Shop Now
+              </a>
+              <button
+                class="flex h-12 items-center justify-center rounded-full px-8 bg-[#e2e8f0] dark:bg-[#1e293b] hover:bg-[#e8dcd5] dark:hover:bg-[#4a3b32] text-[#0f172a] dark:text-white text-base font-bold transition-all">
+                Buy Patterns
+              </button>
+            </div>
+            <div id="hero-products-container"
+              class="flex items-center gap-4 mt-0 pt-6 border-t border-[#e2e8f0] dark:border-[#1e293b] min-h-[200px] transition-all duration-700 ease-out opacity-0 translate-y-4">
+              <!-- Dynamic Content -->
+            </div>
+          </div>
+          <div class="lg:w-1/2 relative group">
+            <div
+              class="absolute -inset-4 bg-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div id="hero-bg-image"
+              class="relative w-full aspect-square bg-cover bg-center rounded-[2rem] shadow-xl overflow-hidden transition-all duration-700 ease-in-out"
+              style='background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuB7FQ3zuv-x21Hv6odsfykUXKADwuJk5ybNW1NepTQJYblAKcZ-_uBhWbVru3joEZ06hOxj0LQ2zZ28dQfqZoR3XVcE_8Ukfsm2ojSZacDLHsV8Ylz4S0aGxZSqufkZW1KK2QbG6C1qWvJunSX5VyB1CtddCpjhuZGyL3kJ1I9N381R7wSgtCVqP8v1V1wlW9As786fOSWcknuEAqsylnLd6iqNcEpKkkG_RPwZcTSC3KB2imA8gKD6qF9_3En_0jwyxHyP0Ll2Gtu_&quot;);'>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            </div>
+            <!-- Floating Card -->
+            <div
+              class="absolute -bottom-6 -left-6 md:bottom-8 md:-left-8 bg-white dark:bg-[#1e293b] p-4 rounded-xl shadow-lg max-w-[200px] hidden sm:flex gap-3 items-center animate-bounce duration-[3000ms]">
+              <div class="size-12 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                <span id="hero-floating-icon" class="material-symbols-outlined text-primary">download</span>
+              </div>
+              <div>
+                <p id="hero-floating-subtitle" class="text-xs text-gray-500 dark:text-gray-400">Best Seller</p>
+                <p id="hero-floating-title" class="font-bold text-sm">Instant PDF Download</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <!-- Categories Grid -->
+    <section class="w-full max-w-[1440px] px-4 md:px-10 py-12">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+        <div>
+          <h3 class="text-2xl font-bold leading-tight tracking-[-0.015em]">Shop by Category</h3>
+          <p class="text-gray-500 dark:text-gray-400 mt-1">Find exactly what you're looking for</p>
+        </div>
+        <a class="text-primary font-bold text-sm flex items-center hover:underline decoration-2 underline-offset-4"
+          href="/pages/shop.html">
+          View All Categories <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+        </a>
+      </div>
+      <div id="landing-categories-container" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Categories will be dynamically loaded here -->
+        <div class="col-span-full text-center py-10 text-gray-500">Loading categories...</div>
+      </div>
+    </section>
+    <!-- Trending Patterns -->
+    <section class="w-full max-w-[1440px] px-4 md:px-10 py-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold leading-tight tracking-[-0.015em]">Trendings</h2>
+        <div class="flex gap-2">
+          <button
+            class="size-10 rounded-full border border-[#e2e8f0] dark:border-[#1e293b] flex items-center justify-center hover:bg-white dark:hover:bg-[#2a201a]">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+          <button
+            class="size-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 shadow-md shadow-primary/20">
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+      <div id="trending-products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      </div>
+    </section>
+    <!-- Feature Split Section (Meet the Maker Style) -->
+    <section
+      class="w-full bg-[#eff6ff] dark:bg-[#172554] py-16 lg:py-24 my-8 rounded-none md:rounded-[3rem] max-w-[1400px]">
+      <div class="px-4 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="order-2 lg:order-1 flex flex-col gap-6">
+          <h2 class="text-3xl md:text-4xl font-bold leading-tight">Crafted with Love, <br />Shared with Passion</h2>
+          <p class="text-lg text-[#0f172a]/80 dark:text-[#e2e8f0]/80 leading-relaxed">
+            Hi, I'm July! What started as a small hobby in my living room has grown into a lifelong passion for crafting
+            intricate crochet pieces.
+            I focus on the artistry of every stitch, ensuring each pattern is easy to
+            follow and every finished item is made with the softest sustainable cotton.
+          </p>
+          <div class="grid grid-cols-2 gap-6 mt-4">
+            <div class="flex gap-4 items-start">
+              <div
+                class="size-10 bg-white dark:bg-[#1e293b] rounded-full flex items-center justify-center shrink-0 text-primary">
+                <span class="material-symbols-outlined">eco</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1">100% Cotton</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Sustainable &amp; Soft</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div
+                class="size-10 bg-white dark:bg-[#1e293b] rounded-full flex items-center justify-center shrink-0 text-primary">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1">Fast Shipping</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Tracked Delivery</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div
+                class="size-10 bg-white dark:bg-[#1e293b] rounded-full flex items-center justify-center shrink-0 text-primary">
+                <span class="material-symbols-outlined">verified</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1">Quality Patterns</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Easy to Follow</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div
+                class="size-10 bg-white dark:bg-[#1e293b] rounded-full flex items-center justify-center shrink-0 text-primary">
+                <span class="material-symbols-outlined">favorite</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1">Handmade</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Made to Order</p>
+              </div>
+            </div>
+          </div>
+          <button
+            class="mt-6 w-fit bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+            Read Story
+          </button>
+        </div>
+        <div class="order-1 lg:order-2 relative flex justify-center">
+          <div class="relative w-full max-w-md aspect-square">
+            <div class="absolute inset-0 bg-white dark:bg-[#1e293b] rounded-full opacity-30 scale-105"></div>
+            <div class="absolute inset-4 bg-white dark:bg-[#1e293b] rounded-full opacity-60 scale-105"></div>
+            <div
+              class="absolute inset-0 rounded-full border-4 border-white dark:border-[#1e293b] overflow-hidden shadow-2xl">
+              <img src="/assets/profile-pic1-Dwq-aZEL.png" alt="July" class="w-full h-full object-cover">
+            </div>
+            <!-- Decorative badge -->
+            <div
+              class="absolute bottom-10 -right-4 bg-white dark:bg-[#0f172a] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-[pulse_4s_ease-in-out_infinite]">
+              <div class="text-center">
+                <p class="text-xs font-bold text-gray-500 uppercase">Since</p>
+                <p class="text-xl font-black text-primary">2022</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Newsletter -->
+    <section class="w-full max-w-[960px] px-4 py-16 text-center">
+      <div class="bg-primary/5 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+        <!-- Background decorations -->
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center gap-4">
+          <span class="material-symbols-outlined text-4xl text-primary">mail</span>
+          <h2 class="text-2xl md:text-3xl font-bold">Join the Crochet Club</h2>
+          <p class="text-gray-600 dark:text-gray-300 max-w-md mx-auto">Get 15% off your first order, free patterns, and
+            weekly inspiration delivered to your inbox.</p>
+          <form id="newsletter-form" class="mt-4 flex w-full max-w-md flex-col sm:flex-row gap-2">
+            <div class="flex-1 flex flex-col gap-1">
+              <input id="newsletter-email"
+                class="w-full rounded-full border-none bg-white dark:bg-[#1e293b] px-6 py-3 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none dark:text-white"
+                placeholder="Enter your email address" required="" type="email" />
+              <p id="newsletter-feedback" class="text-xs text-red-500 hidden pl-4"></p>
+            </div>
+            <button id="newsletter-submit-btn"
+              class="bg-primary text-white font-bold rounded-full px-8 py-3 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 whitespace-nowrap h-fit"
+              type="submit">
+              Subscribe
+            </button>
+          </form>
+          <p class="text-xs text-gray-400 mt-2">No spam, just yarn love. Unsubscribe anytime.</p>
+        </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <footer class="w-full border-t border-[#e2e8f0] dark:border-[#1e293b] bg-white dark:bg-[#1a120d] pt-16 pb-8">
+      <div class="max-w-[1440px] mx-auto px-4 md:px-10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div class="col-span-1 md:col-span-1 flex flex-col gap-4">
+            <div class="flex items-center gap-2 text-primary">
+              <span class="material-symbols-outlined text-3xl">gesture</span>
+              <span class="font-bold text-xl text-[#0f172a] dark:text-white">Crochet Corner</span>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+              Bringing warmth and creativity to your home with handmade goods and easy-to-follow patterns.
+            </p>
+            <div class="flex gap-4 mt-2">
+              <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                  class="sr-only">Instagram</span>
+                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+                  <path clip-rule="evenodd"
+                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.673 2.013 10.03 2 12.488 2h-.173zm-3.715 14a2.715 2.715 0 110-5.43 2.715 2.715 0 010 5.43zm9.932-8.32a1.065 1.065 0 11-2.13 0 1.065 1.065 0 012.13 0z"
+                    fill-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                  class="sr-only">Facebook</span>
+                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+                  <path clip-rule="evenodd"
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                    fill-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
+                  class="sr-only">Pinterest</span>
+                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+                  <path clip-rule="evenodd"
+                    d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.399.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.173 0 7.41 2.967 7.41 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"
+                    fill-rule="evenodd"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="col-span-1">
+            <h4 class="font-bold mb-4">Shop</h4>
+            <ul class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <li><a class="hover:text-primary transition-colors" href="#">All Products</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Patterns (PDF)</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Finished Goods</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Yarn &amp; Tools</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Gift Cards</a></li>
+            </ul>
+          </div>
+          <div class="col-span-1">
+            <h4 class="font-bold mb-4">Support</h4>
+            <ul class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <li><a class="hover:text-primary transition-colors" href="#">Help Center</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Shipping &amp; Returns</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Pattern FAQ</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="col-span-1">
+            <h4 class="font-bold mb-4">Company</h4>
+            <ul class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">
+              <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Sustainability</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+              <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-xs text-gray-400">© 2022 Seven Stitches. All rights reserved.</p>
+          <div class="flex gap-4">
+            <img alt="Visa" class="h-6" data-alt="Visa card logo"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCglZ1wsNeD3P6rioSyljeNUYnlvEhd06WNqewgregK5beHAAdVh3deJlyOR1lx6tODTYMCXZQ7Ou6oiZhc8oN-cIb2MHcIs373JtsUOB62ROD8iDhQQSykSdSANS6bBovv06z8WdJmJRocRTFNF3vqNsNwCQDbQAmmWEZWd3XPJTuXt_qxGsJTnpcJh90ImB21eb3gyz7RbyyhXxqeIl9qccVfA8-xfqVDveXGeaFcnxXKw78Czu6Lx6A2ytzYLwU-McTEzckcm_sM" />
+            <img alt="Mastercard" class="h-6" data-alt="Mastercard logo"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuANSJ97_luLSLOVFg0-fBKxb9CxE5kCZumQv7XZTRcefIUHYINgTYzCQbdNSeWVevrVbGTbVrNRPKvpfFRmy8sP4zr09kdt92OkY5zAOJnZzgjcftPqRdV2wHk4wax4vSRPa8QpYOXMrxxl1cNq8Ul4Gz_8jP22ArcqK0lUDvK9d6p-WUjG7HsgFuK-e_cCE3B0cXhQkiQO08RVt2Vf_CDvwhp9SKKc82NM67CkLgr3_5NUmUfJZGUzK2pVUYY8IZq84VIp3HIsenjy" />
+            <img alt="PayPal" class="h-6" data-alt="PayPal logo"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVC3tXRuEBE4VtjxTvwYmwpETptaAcuYMry_lBNjkbaO35nAjQwCy45E1juTybvsnaFT3GVF2uuB-kMVMcWlrBiRPVYn0OfZ8Jp9Oa98_Xl8_jF9VajJP7Jy2IrL1mJvNy151Nu4hgLeOoj52FD-pkM_mO94FqhU3WkwLfS0khV5gBSjyTYrL3CrN3NgLgL2-1Ur8OhFSt_2iuyQWCPF885WyDC4Is_3ulbo6JJwi2gWgHKUmzwJw8bdtwN8mmotH9Rp1R1DZs-FQd" />
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+
+</html>

@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/header-BXuXbyNE.js","assets/auth.service-B-BoZdmw.js","assets/supabase-w99FfbcE.js","assets/toast-CErdx8Qf.js","assets/category.service-ILwE1iue.js"])))=>i.map(i=>d[i]);
+import"./supabase-w99FfbcE.js";import{_ as a}from"./preload-helper-BXl3LOEh.js";/* empty css              */if(!customElements.get("app-header")){const{AppHeader:e}=await a(async()=>{const{AppHeader:t}=await import("./header-BXuXbyNE.js");return{AppHeader:t}},__vite__mapDeps([0,1,2,3,4]));customElements.define("app-header",e)}
