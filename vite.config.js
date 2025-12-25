@@ -19,6 +19,8 @@ export default defineConfig({
                 category: 'pages/category.html',
                 about: 'pages/about.html',
                 admin: 'pages/admin.html',
+                terms: 'pages/terms.html',
+                privacy: 'pages/privacy.html',
             },
         },
     },
