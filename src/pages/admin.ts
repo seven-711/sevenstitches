@@ -111,6 +111,34 @@ async function initAdmin() {
         console.error('Admin Init Error:', error);
         window.location.href = '/';
     }
+
+    // Responsive Sidebar Logic
+    const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function toggleSidebar() {
+        const isClosed = sidebarEl?.classList.contains('-translate-x-full');
+        if (isClosed) {
+            sidebarEl?.classList.remove('-translate-x-full');
+            overlay?.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            sidebarEl?.classList.add('-translate-x-full');
+            overlay?.classList.add('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    toggleBtn?.addEventListener('click', toggleSidebar);
+    overlay?.addEventListener('click', toggleSidebar);
+
+    // Close sidebar on mobile when navigating
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth < 1024) { // lg breakpoint
+                sidebarEl?.classList.add('-translate-x-full');
+                overlay?.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+    });
 }
 
 document.addEventListener('DOMContentLoaded', initAdmin);

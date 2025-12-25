@@ -191,7 +191,7 @@ async function initHomepage() {
 
         if (products.length > 0) {
             // 1. Prepare Data
-            const latest3 = products.slice(0, 3);
+            const heroProducts = products; // Show all products
 
             // 2. Auto-Rotation State
             let currentIndex = 0;
@@ -200,8 +200,8 @@ async function initHomepage() {
             const startRotation = () => {
                 stopRotation(); // Clear existing to be safe
                 rotationInterval = setInterval(() => {
-                    currentIndex = (currentIndex + 1) % latest3.length;
-                    updateHero(latest3[currentIndex]);
+                    currentIndex = (currentIndex + 1) % heroProducts.length;
+                    updateHero(heroProducts[currentIndex]);
                 }, 5000);
             };
 
@@ -214,13 +214,14 @@ async function initHomepage() {
             startRotation();
 
             // 4. Render Thumbnails
-            heroProductsContainer.innerHTML = latest3.map((product, index) => {
+            heroProductsContainer.classList.add('flex', 'gap-4', 'overflow-x-auto', 'pb-4', 'scrollbar-hide', 'max-w-full'); // Ensure horizontal scroll
+            heroProductsContainer.innerHTML = heroProducts.map((product, index) => {
                 const imgUrl = product.images?.[0] || '';
                 if (!imgUrl) return '';
 
                 // Note: Using a button for semantic clickability
                 return `
-                    <button class="hero-thumb-btn group relative size-24 rounded-2xl border-2 border-white dark:border-[#1e293b] shadow-lg overflow-hidden transition-transform duration-300 hover:scale-110 hover:z-10 bg-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" 
+                    <button class="hero-thumb-btn group relative size-24 rounded-2xl border-2 border-white dark:border-[#1e293b] shadow-lg overflow-hidden transition-transform duration-300 hover:scale-110 hover:z-10 bg-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary flex-shrink-0" 
                        data-index="${index}"
                        title="${product.name}">
                         <img src="${imgUrl}" alt="${product.name}" class="w-full h-full object-cover pointer-events-none">
@@ -229,32 +230,22 @@ async function initHomepage() {
                 `;
             }).join('');
 
-            // Event Delegation (Robust Click Handling)
+            // Event Delegation (Redirect on Click)
             heroProductsContainer.addEventListener('click', (e) => {
                 const target = (e.target as HTMLElement).closest('.hero-thumb-btn');
                 if (target) {
                     const indexAttr = target.getAttribute('data-index');
                     if (indexAttr) {
                         const index = parseInt(indexAttr);
-                        const product = latest3[index];
+                        const product = heroProducts[index];
                         if (product) {
-                            console.log('Hero update triggered for:', product.name);
-                            currentIndex = index; // Sync state
-                            updateHero(product);
-                            startRotation(); // Reset timer based on user interaction
+                            // Redirect to product page requested by user
+                            window.location.href = `/pages/product.html?id=${product.id}`;
                         }
                     }
                 }
             });
-
-            // Add "More" indicator
-            if (products.length > 3) {
-                heroProductsContainer.innerHTML += `
-                    <a href="/pages/shop.html" class="flex items-center justify-center size-16 rounded-full bg-gray-100 dark:bg-[#1e293b] text-gray-500 text-xs font-bold hover:bg-primary hover:text-white transition-colors ml-2">
-                        +${products.length - 3}
-                    </a>
-                `;
-            }
+            // Removed +N "More" indicator logic as we show all now.
 
             // Animation
             setTimeout(() => {

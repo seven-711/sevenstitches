@@ -67,16 +67,14 @@
     class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col text-text-main dark:text-text-main-dark transition-colors duration-300">
     <!-- Header -->
     <header
-        class="sticky top-0 z-50 w-full bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-md border-b border-border-light dark:border-border-dark">
+        class="sticky top-0 z-50 w-full bg-[#f8f9f9] dark:bg-background-dark/95 backdrop-blur-sm border-b border-border-light dark:border-border-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="size-8 text-primary flex items-center justify-center">
-                        <span class="material-symbols-outlined text-3xl">gesture</span>
-                    </div>
+                <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                    <img src="/logo.png" alt="Seven Stitches Logo" class="h-10 w-auto" />
                     <h1 class="text-xl font-bold tracking-tight">Seven Stitches</h1>
-                </div>
+                </a>
                 <!-- Trust Indicator -->
                 <div class="flex items-center gap-2 text-text-muted text-sm font-medium">
                     <span class="material-symbols-outlined text-lg">lock</span>
@@ -162,7 +160,7 @@
                             <div
                                 class="flex items-center justify-center size-8 rounded-full bg-primary text-white font-bold text-sm">
                                 1</div>
-                            <h2 class="text-2xl font-bold">Delivery Details</h2>
+                            <h2 class="text-2xl font-bold">Meet-up Details</h2>
                         </div>
                         <form class="space-y-6">
                             <!-- Full Name -->
@@ -187,45 +185,65 @@
                                         id="email" placeholder="jane@example.com" type="email" />
                                 </div>
                             </div>
-                            <!-- Address -->
+                            <!-- Meet-up Location -->
                             <div class="space-y-2">
-                                <label class="block text-sm font-medium ml-1" for="address">Street Address</label>
+                                <label class="block text-sm font-medium ml-1" for="meetupLocation">Meet-up
+                                    Location</label>
                                 <div class="relative">
                                     <span
-                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">home</span>
-                                    <input
-                                        class="w-full pl-12 pr-4 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
-                                        id="address" placeholder="123 Crochet Lane" type="text" />
+                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">location_on</span>
+                                    <select
+                                        class="w-full pl-12 pr-4 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none transition-all placeholder:text-text-muted/50 cursor-pointer"
+                                        id="meetupLocation">
+                                        <option value="">Select a Meet-up Point...</option>
+                                        <option value="Centrio Mall / Gaisano City Mall">Centrio Mall / Gaisano City
+                                            Mall</option>
+                                        <option value="SM Downtown">SM Downtown</option>
+                                        <option value="Limketkai Center">Limketkai Center</option>
+                                        <option value="Capitol University / USTP">Capitol University / USTP</option>
+                                        <option value="Cogon / Ororama">Cogon / Ororama</option>
+                                        <option value="China Village Zayas Carmen">China Village Zayas Carmen</option>
+                                    </select>
                                 </div>
                             </div>
-                            <!-- City, State, Zip Grid -->
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                            <!-- Meet-up Date & Time -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-medium ml-1" for="city">City/Municipality</label>
+                                    <label class="block text-sm font-medium ml-1" for="meetupDate">Preferred
+                                        Date</label>
                                     <div class="relative">
-                                        <select
-                                            class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none text-text-muted cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                            id="city" disabled>
-                                            <option value="">Select State first...</option>
-                                        </select>
+                                        <input
+                                            class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                            id="meetupDate" type="date" />
                                     </div>
+                                    <p class="text-xs text-text-muted ml-1 mt-1">
+                                        Must be scheduled at least 2 days in advance. See <a href="/pages/terms.html"
+                                            target="_blank" class="underline text-primary hover:text-primary-dark">Terms
+                                            of Service</a> for details.
+                                    </p>
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-medium ml-1" for="state">State/Province</label>
+                                    <label class="block text-sm font-medium ml-1" for="meetupTime">Preferred
+                                        Time</label>
                                     <div class="relative">
-                                        <select
-                                            class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none text-text-muted cursor-pointer"
-                                            id="state">
-                                            <option value="">Select Province...</option>
-                                        </select>
+                                        <input
+                                            class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
+                                            id="meetupTime" type="time" />
                                     </div>
+                                    <p class="text-xs text-text-muted ml-1">Daylight hours only</p>
                                 </div>
-                                <div class="space-y-2">
-                                    <label class="block text-sm font-medium ml-1" for="zip">Postal Code
-                                        (4-digits)</label>
+                            </div>
+
+                            <!-- Fixed Location Display -->
+                            <div class="space-y-2 opacity-60">
+                                <label class="block text-sm font-medium ml-1">City/Province</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-4 top-3.5 text-text-muted">map</span>
                                     <input
-                                        class="w-full px-5 h-12 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-text-muted/50"
-                                        id="zip" placeholder="10001" type="text" />
+                                        class="w-full pl-12 pr-4 h-12 bg-gray-100 dark:bg-slate-800 border-none rounded-full cursor-not-allowed"
+                                        disabled value="Cagayan de Oro City, Misamis Oriental" type="text" />
                                 </div>
                             </div>
                             <!-- Phone -->
@@ -252,16 +270,16 @@
                         </div>
                         <p class="text-text-muted mb-4 text-sm">Choose how you want to pay</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <!-- Option 1: Pay Online -->
+                            <!-- Option 1: Pay Online (Disabled) -->
                             <label
-                                class="relative flex flex-col p-5 bg-surface-light dark:bg-surface-dark border-2 border-transparent has-[:checked]:border-primary has-[:checked]:bg-primary/5 rounded-xl cursor-pointer shadow-sm hover:shadow-md transition-all group">
-                                <input checked="" class="peer sr-only" id="payment-online" name="paymentMethod"
+                                class="relative flex flex-col p-5 bg-gray-50 dark:bg-slate-900/50 border-2 border-transparent rounded-xl cursor-not-allowed opacity-60 transition-all select-none grayscale">
+                                <input disabled class="peer sr-only" id="payment-online" name="paymentMethod"
                                     type="radio" value="online" />
                                 <div
-                                    class="absolute top-5 right-5 text-primary opacity-0 peer-checked:opacity-100 transition-opacity">
-                                    <span class="material-symbols-outlined fill-current">check_circle</span>
+                                    class="absolute top-3 right-3 bg-gray-200 dark:bg-slate-700 text-xs font-bold px-2 py-1 rounded text-text-muted">
+                                    Coming Soon
                                 </div>
-                                <div class="mb-3 p-3 bg-primary/10 w-fit rounded-full text-primary">
+                                <div class="mb-3 p-3 bg-gray-200 dark:bg-slate-800 w-fit rounded-full text-text-muted">
                                     <span class="material-symbols-outlined text-2xl">credit_card</span>
                                 </div>
                                 <span class="font-bold text-lg mb-1">Pay Online</span>
@@ -270,13 +288,14 @@
                             <!-- Option 2: Pay on Delivery -->
                             <label
                                 class="relative flex flex-col p-5 bg-surface-light dark:bg-surface-dark border-2 border-transparent has-[:checked]:border-primary has-[:checked]:bg-primary/5 rounded-xl cursor-pointer shadow-sm hover:shadow-md hover:border-primary/50 transition-all group">
-                                <input class="peer sr-only" id="payment-cod" name="paymentMethod" type="radio"
+                                <input checked class="peer sr-only" id="payment-cod" name="paymentMethod" type="radio"
                                     value="cod" />
                                 <div
                                     class="absolute top-5 right-5 text-primary opacity-0 peer-checked:opacity-100 transition-opacity">
                                     <span class="material-symbols-outlined fill-current">check_circle</span>
                                 </div>
-                                <div class="mb-3 p-3 bg-gray-100 dark:bg-gray-800 w-fit rounded-full text-text-muted">
+                                <div
+                                    class="mb-3 p-3 bg-gray-100 dark:bg-gray-800 w-fit rounded-full text-text-muted group-hover:text-primary transition-colors">
                                     <span class="material-symbols-outlined text-2xl">local_shipping</span>
                                 </div>
                                 <span class="font-bold text-lg mb-1">Pay on Delivery</span>
@@ -325,12 +344,12 @@
                         <hr class="border-border-light dark:border-border-dark border-dashed mb-6" />
                         <!-- Discount Code -->
                         <div class="flex flex-col gap-2 mb-8" id="coupon-input-container">
-                            <div class="flex gap-2">
+                            <div class="relative">
                                 <input id="coupon-code-input"
-                                    class="flex-1 px-5 h-10 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-text-muted/50 uppercase"
+                                    class="w-full pl-5 pr-24 h-12 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-text-muted/50 uppercase"
                                     placeholder="Promo Code" type="text" />
                                 <button id="apply-coupon-btn"
-                                    class="h-10 px-5 rounded-full bg-text-main dark:bg-white text-white dark:text-text-main text-sm font-bold hover:opacity-90 transition-opacity">Apply</button>
+                                    class="absolute right-1 top-1 bottom-1 px-5 rounded-full bg-text-main dark:bg-white text-white dark:text-text-main text-sm font-bold hover:opacity-90 transition-opacity">Apply</button>
                             </div>
                             <p id="coupon-message" class="text-xs min-h-[1.25em]"></p>
                         </div>
@@ -362,7 +381,7 @@
                         </button>
                         <p class="text-center text-xs text-text-muted mt-4">
                             By placing your order, you agree to our <a class="underline hover:text-primary"
-                                href="#">Terms of Service</a>.
+                                href="/pages/terms.html" target="_blank">Terms of Service</a>.
                         </p>
                     </div>
                 </div>

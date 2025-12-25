@@ -44,6 +44,8 @@ export class CheckoutService {
                     total_amount: totalAmount,
                     status: 'pending',
                     tracking_number: OrderService.generateTrackingNumber(),
+                    shipping_address: details.address,
+                    phone: details.phone,
                     // user_id: we could fetch from auth if logged in, skipping for guest flow for now
                 })
                 .select()

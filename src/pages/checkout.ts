@@ -15,130 +15,25 @@ const totalEl = document.getElementById('summary-total');
 const placeOrderBtn = document.getElementById('place-order-btn');
 
 // --- Zod Schema Validation ---
+// --- Zod Schema Validation ---
 const checkoutSchema = z.object({
     fullName: z.string().min(2, "Full Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
     phone: z.string().regex(/^(09|\+639)\d{9}$/, "Phone number must be valid (e.g., 09123456789)"),
-    state: z.string().min(1, "Please select a Province"),
-    city: z.string().min(1, "Please select a City/Municipality"),
-    zip: z.string().regex(/^\d{4}$/, "Postal code must be 4 digits"),
-    address: z.string().min(5, "Street address must be at least 5 characters"),
+    meetupLocation: z.string().min(1, "Please select a meet-up location"),
+    meetupDate: z.string().min(1, "Please select a preferred date"),
+    meetupTime: z.string().min(1, "Please select a preferred time"),
     paymentMethod: z.enum(['online', 'cod'], { errorMap: () => ({ message: "Please select a payment method" }) })
 });
 
 let appliedCoupon: { code: string; percent: number } | null = null;
 
-const stateSelect = document.getElementById('state') as HTMLSelectElement;
-const citySelect = document.getElementById('city') as HTMLSelectElement;
-const zipInput = document.getElementById('zip') as HTMLInputElement;
-
-// PSGC API Interfaces
-interface PsgcLocation {
-    code: string;
-    name: string;
-}
-
-const METRO_MANILA_CODE = '1300000000';
-
-async function fetchProvinces() {
-    if (!stateSelect) return;
-
-    try {
-        // Add loading state
-        const loadingOption = document.createElement('option');
-        loadingOption.textContent = 'Loading Provinces...';
-        stateSelect.appendChild(loadingOption);
-        stateSelect.disabled = true;
-
-        const res = await fetch('https://psgc.cloud/api/provinces');
-        const provinces: PsgcLocation[] = await res.json();
-
-        // Add Metro Manila manually as it is a Region
-        provinces.push({ name: 'Metro Manila', code: METRO_MANILA_CODE });
-
-        // Sort alphabetically
-        provinces.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Clear and populate
-        stateSelect.innerHTML = '<option value="">Select Province...</option>';
-        provinces.forEach(p => {
-            const option = document.createElement('option');
-            option.value = p.name; // Keep value as name for backend
-            option.dataset.code = p.code; // Store code for chaining
-            option.textContent = p.name;
-            stateSelect.appendChild(option);
-        });
-
-    } catch (error) {
-        console.error('Failed to fetch provinces', error);
-        stateSelect.innerHTML = '<option value="">Failed to load</option>';
-    } finally {
-        stateSelect.disabled = false;
-    }
-}
-
-async function fetchCities(code: string) {
-    if (!citySelect) return;
-
-    try {
-        citySelect.innerHTML = '<option value="">Loading...</option>';
-        citySelect.disabled = true;
-
-        let url = `https://psgc.cloud/api/provinces/${code}/cities-municipalities`;
-
-        // Handle Metro Manila (NCR)
-        if (code === METRO_MANILA_CODE) {
-            url = `https://psgc.cloud/api/regions/${code}/cities-municipalities`;
-        }
-
-        const res = await fetch(url);
-        const cities: PsgcLocation[] = await res.json();
-
-        cities.sort((a, b) => a.name.localeCompare(b.name));
-
-        citySelect.innerHTML = '<option value="">Select City/Municipality...</option>';
-        cities.forEach(c => {
-            const option = document.createElement('option');
-            option.value = c.name;
-            option.textContent = c.name;
-            citySelect.appendChild(option);
-        });
-        citySelect.disabled = false;
-
-    } catch (error) {
-        console.error('Failed to fetch cities', error);
-        citySelect.innerHTML = '<option value="">Failed to load</option>';
-    }
-}
-
-if (stateSelect && citySelect) {
-    // Initial Load
-    fetchProvinces();
-
-    stateSelect.addEventListener('change', () => {
-        const selectedOption = stateSelect.options[stateSelect.selectedIndex];
-        const code = selectedOption.dataset.code;
-
-        // Reset City and Zip
-        citySelect.innerHTML = '<option value="">Select City/Municipality...</option>';
-        citySelect.disabled = true;
-        if (zipInput) zipInput.value = '';
-
-        if (code) {
-            fetchCities(code);
-        }
-    });
-
-    citySelect.addEventListener('change', () => {
-        if (zipInput) zipInput.value = '';
-    });
-}
 
 // ... Rest of the existing logic (Render Summary, Coupon, etc.) ...
 function renderOrderSummary() {
     const items = CartService.getItems();
     const subtotal = CartService.getTotal();
-    let tax = subtotal * 0.08; // Assuming 8% tax
+    let tax = 0; // Tax set to 0 as requested
     let total = subtotal + tax;
 
     if (itemsContainer) {
@@ -206,7 +101,7 @@ function renderOrderSummary() {
         }
     }
 
-    tax = (subtotal - discountAmount) * 0.08;
+    tax = 0; // Tax set to 0 as requested
     total = (subtotal - discountAmount) + tax;
 
     if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
@@ -221,9 +116,9 @@ function setupCouponListeners() {
         couponContainer.id = 'coupon-input-container';
         couponContainer.className = 'mt-6 pt-6 border-t border-border';
         couponContainer.innerHTML = `
-            <div class="flex gap-2">
-                <input type="text" id="coupon-code-input" placeholder="Discount Code" class="flex-1 bg-white dark:bg-slate-800 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary uppercase" />
-                <button type="button" id="apply-coupon-btn" class="bg-gray-200 dark:bg-slate-700 text-text-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 dark:hover:bg-slate-600">Apply</button>
+            <div class="relative">
+                <input type="text" id="coupon-code-input" placeholder="Promo Code" class="w-full pl-5 pr-24 h-12 bg-white dark:bg-slate-800 border border-border rounded-full text-sm focus:outline-none focus:border-primary uppercase" />
+                <button type="button" id="apply-coupon-btn" class="absolute right-1 top-1 bottom-1 px-5 rounded-full bg-surface-dark dark:bg-white text-white dark:text-text-main text-sm font-bold hover:opacity-90 transition-opacity">Apply</button>
             </div>
             <p id="coupon-message" class="text-xs mt-1 min-h-[1.25em]"></p>
         `;
@@ -358,11 +253,10 @@ if (placeOrderBtn) {
         const formData = {
             fullName: (document.getElementById('fullName') as HTMLInputElement)?.value,
             email: (document.getElementById('email') as HTMLInputElement)?.value,
-            address: (document.getElementById('address') as HTMLInputElement)?.value, // Street Address
-            city: (document.getElementById('city') as HTMLSelectElement)?.value,
-            state: (document.getElementById('state') as HTMLSelectElement)?.value,
-            zip: (document.getElementById('zip') as HTMLInputElement)?.value,
             phone: (document.getElementById('phone') as HTMLInputElement)?.value,
+            meetupLocation: (document.getElementById('meetupLocation') as HTMLSelectElement)?.value,
+            meetupDate: (document.getElementById('meetupDate') as HTMLInputElement)?.value,
+            meetupTime: (document.getElementById('meetupTime') as HTMLInputElement)?.value,
             paymentMethod: (document.querySelector('input[name="paymentMethod"]:checked') as HTMLInputElement)?.value
         };
 
@@ -378,7 +272,7 @@ if (placeOrderBtn) {
         }
 
         // Format Address for Backend (State, City, Street)
-        const formattedAddress = `${formData.state}, ${formData.city}, ${formData.address}`;
+        const formattedAddress = `MEET-UP: ${formData.meetupLocation} | DATE: ${formData.meetupDate} | TIME: ${formData.meetupTime} | CDO`;
 
         // Stock Validation
         const cartItems = CartService.getItems();

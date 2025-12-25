@@ -64,24 +64,27 @@ export class DashboardService {
         orders?.forEach(order => {
             const amount = Number(order.total_amount) || 0;
             const date = new Date(order.created_at);
+            const isRevenue = ['paid', 'delivered', 'completed'].includes(order.status);
 
-            // Total Revenue (All time)
-            revenue += amount;
+            // Total Revenue (All time) - Only if status is paid/delivered/completed
+            if (isRevenue) {
+                revenue += amount;
 
-            // Past 30 Days
-            if (date >= thirtyDaysAgo) {
-                revenueMonth += amount;
+                // Past 30 Days
+                if (date >= thirtyDaysAgo) {
+                    revenueMonth += amount;
 
-                // Chart Data
-                const dateStr = date.toISOString().split('T')[0];
-                if (dailyRevenue[dateStr] !== undefined) {
-                    dailyRevenue[dateStr] += amount;
+                    // Chart Data
+                    const dateStr = date.toISOString().split('T')[0];
+                    if (dailyRevenue[dateStr] !== undefined) {
+                        dailyRevenue[dateStr] += amount;
+                    }
                 }
-            }
 
-            // Past 7 Days
-            if (date >= sevenDaysAgo) {
-                revenueWeek += amount;
+                // Past 7 Days
+                if (date >= sevenDaysAgo) {
+                    revenueWeek += amount;
+                }
             }
         });
 

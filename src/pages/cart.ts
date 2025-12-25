@@ -52,10 +52,11 @@ function renderCart() {
                         <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity - 1})">-</button>
                         <span class="w-6 text-center text-sm font-bold">${item.quantity}</span>
                         <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity + 1})">+</button>
+                        <div class="h-4 w-px bg-gray-300 dark:bg-slate-600 mx-1"></div>
+                        <button class="w-6 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors" onclick="window.removeItem('${item.id}')">
+                            <span class="material-symbols-outlined text-[18px] text-red-500">delete</span>
+                        </button>
                      </div>
-                     <button class="size-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors" onclick="window.removeItem('${item.id}')">
-                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                     </button>
                 </div>
             </div>
         `}).join('');

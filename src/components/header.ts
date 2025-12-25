@@ -15,10 +15,7 @@ export class AppHeader extends HTMLElement {
         <div class="px-4 md:px-10 py-3 max-w-[1440px] mx-auto flex items-center justify-between gap-4 relative z-50 bg-inherit">
           <div class="flex items-center gap-8">
             <a class="flex items-center gap-3 group" href="/">
-              <div class="size-8 text-primary flex items-center justify-center">
-                <span class="material-symbols-outlined text-3xl">gesture</span>
-              </div>
-              <h2 class="text-lg font-bold leading-tight tracking-[-0.015em] hidden sm:block">Seven Stitches</h2>
+              <img src="/logo.png" alt="Seven Stitches Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110" />
             </a>
             <nav class="hidden lg:flex items-center gap-8">
               <a class="text-sm font-medium hover:text-primary transition-colors" href="/pages/shop.html">Shop</a>

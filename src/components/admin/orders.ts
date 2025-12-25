@@ -121,7 +121,7 @@ export async function renderOrders(container: HTMLElement) {
             </div>
         </div>
         <!-- Order Details Modal -->
-        <div id="order-details-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div id="order-details-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="window.closeOrderModal()"></div>
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
                 <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-[#151c2b] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-gray-100 dark:border-gray-700">
@@ -196,6 +196,15 @@ export async function renderOrders(container: HTMLElement) {
                 const date = new Date(order.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
                 const statusColor = getStatusColor(order.status);
 
+                // Parse Address (Meetup Details)
+                let meetupInfo = { location: 'N/A', date: 'N/A', time: 'N/A' };
+                if (order.shipping_address && order.shipping_address.includes('MEET-UP:')) {
+                    const parts = order.shipping_address.split('|');
+                    meetupInfo.location = parts[0]?.replace('MEET-UP:', '').trim() || 'N/A';
+                    meetupInfo.date = parts[1]?.replace('DATE:', '').trim() || 'N/A';
+                    meetupInfo.time = parts[2]?.replace('TIME:', '').trim() || 'N/A';
+                }
+
                 content.innerHTML = `
                 <!-- 1. Header Info -->
                 <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -221,7 +230,29 @@ export async function renderOrders(container: HTMLElement) {
                     <div>
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Customer</p>
                         <p class="text-sm font-medium text-gray-900 dark:text-white">${order.customer_email}</p>
-                        <p class="text-xs text-gray-500 truncate" title="${order.id}">Guest Checkout</p>
+                        <p class="text-xs text-gray-500 truncate mt-0.5">${order.phone || 'No phone number'}</p>
+                    </div>
+                </div>
+
+                 <!-- 3. Meet-up Details -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800/50">
+                    <h4 class="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <span class="material-icons-round text-sm">event_available</span>
+                        Meet-up Details
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <p class="text-xs text-blue-600 dark:text-blue-400 mb-0.5">Location</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">${meetupInfo.location}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-600 dark:text-blue-400 mb-0.5">Preferred Date</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">${meetupInfo.date}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-600 dark:text-blue-400 mb-0.5">Preferred Time</p>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">${meetupInfo.time}</p>
+                        </div>
                     </div>
                 </div>
 
@@ -395,6 +426,9 @@ function renderOrderRow(order: Order) {
     `).join('');
     const extraCount = items.length > 3 ? items.length - 3 : 0;
 
+    // Delete Action
+    const showDelete = ['delivered', 'completed', 'cancelled'].includes(order.status);
+
     return `
     <tr id="order-row-${order.id}" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
         <td class="p-4">
@@ -435,11 +469,40 @@ function renderOrderRow(order: Order) {
             </span>
         </td>
         <td class="p-4 text-right">
-            <button class="text-sm font-medium text-primary hover:text-blue-700 dark:hover:text-blue-400" onclick="window.viewOrderDetails('${order.id}')">View Details</button>
+            <div class="flex items-center justify-end gap-2">
+                <button class="text-sm font-medium text-primary hover:text-blue-700 dark:hover:text-blue-400" onclick="window.viewOrderDetails('${order.id}')">View</button>
+                ${showDelete ? `
+                <button class="text-sm font-medium text-red-500 hover:text-red-700 dark:hover:text-red-400 flex items-center gap-1" onclick="window.deleteOrder('${order.id}')" title="Delete Order">
+                    <span class="material-icons-round text-lg">delete</span>
+                </button>
+                ` : ''}
+            </div>
         </td>
     </tr>
     `;
 }
+
+// Add global handler for delete
+(window as any).deleteOrder = async (orderId: string) => {
+    if (!confirm('Are you sure you want to delete this order? This action cannot be undone.')) return;
+
+    try {
+        await OrderService.deleteOrder(orderId);
+
+        // Remove row from DOM
+        const row = document.getElementById(`order-row-${orderId}`);
+        if (row) {
+            row.remove();
+            Toast.show('Order deleted successfully', 'success');
+        } else {
+            // Fallback: Reload logic if needed, but row removal is cleaner
+            Toast.show('Order deleted, please refresh', 'success');
+        }
+    } catch (error) {
+        console.error('Delete failed:', error);
+        Toast.show('Failed to delete order', 'error');
+    }
+};
 
 function getStatusColor(status: string) {
     switch (status) {

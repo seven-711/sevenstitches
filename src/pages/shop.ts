@@ -1,6 +1,7 @@
 import '../style.css';
 import '../components/header';
 import { ProductService } from '../services/product.service';
+import { ReviewService } from '../services/review.service';
 
 // Ensure Header is defined
 if (!customElements.get('app-header')) {
@@ -23,13 +24,36 @@ const productGrid = document.getElementById('product-grid');
         return;
       }
 
-      productGrid.innerHTML = products.map(product => {
+      // Fetch ratings for all products
+      const productsWithRatings = await Promise.all(products.map(async (product: any) => {
+        const ratingData = await ReviewService.getProductRating(product.id);
+        return { ...product, rating: ratingData };
+      }));
+
+      productGrid.innerHTML = productsWithRatings.map((product: any) => {
         const imageSrc = product.images?.[0] || null;
         const imageStyle = imageSrc ? `background-image: url('${imageSrc}');` : '';
         const fallbackContent = !imageSrc ? `
                     <div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-400">
                         <span class="material-symbols-outlined text-4xl">inventory_2</span>
                     </div>` : '';
+
+        // Rating Stars
+        const avg = product.rating.average || 0;
+        const count = product.rating.count || 0;
+        const fullStars = Math.floor(avg);
+        const hasHalfStar = avg % 1 >= 0.5;
+
+        let starsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+          if (i <= fullStars) {
+            starsHTML += '<span class="material-symbols-outlined text-yellow-400 text-[16px] md:text-[18px] leading-none" style="font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 20;">star</span>';
+          } else if (i === fullStars + 1 && hasHalfStar) {
+            starsHTML += '<span class="material-symbols-outlined text-yellow-400 text-[16px] md:text-[18px] leading-none" style="font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 20;">star_half</span>';
+          } else {
+            starsHTML += '<span class="material-symbols-outlined text-gray-300 text-[16px] md:text-[18px] leading-none" style="font-variation-settings: \'FILL\' 0, \'wght\' 400, \'GRAD\' 0, \'opsz\' 20;">star</span>';
+          }
+        }
 
         return `
                 <a href="/pages/product.html?id=${product.id}" class="group flex flex-col gap-3">
@@ -47,7 +71,14 @@ const productGrid = document.getElementById('product-grid');
                       <h3 class="font-bold text-lg leading-tight group-hover:text-primary transition-colors">${product.name}</h3>
                       <span class="font-bold text-primary">₱${product.price ? Number(product.price).toFixed(2) : '0.00'}</span>
                     </div>
-                    <div class="flex justify-between items-center text-sm text-gray-500">
+                    
+                    <!-- Ratings & Stats -->
+                    <div class="flex items-center gap-1">
+                        <div class="flex items-center">${starsHTML}</div>
+                        <span class="text-xs text-gray-500 ml-1">(${count})</span>
+                    </div>
+
+                    <div class="flex justify-between items-center text-sm text-gray-500 mt-1">
                       <span>${(product as any).categories?.name || 'Product'}</span>
                       <span class="${(product.inventory_count || 0) < 5 ? 'text-red-500 font-medium' : ''}">${product.inventory_count || 0} in stock</span>
                     </div> 

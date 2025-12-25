@@ -6,6 +6,8 @@ export interface Order {
     total_amount: number;
     status: 'pending' | 'paid' | 'approved' | 'in_production' | 'quality_check' | 'shipped' | 'delivered' | 'completed' | 'cancelled';
     created_at: string;
+    shipping_address?: string;
+    phone?: string;
     items?: OrderItem[];
 }
 
@@ -62,6 +64,22 @@ export class OrderService {
         return data;
     }
 
+    static async markOrderCompleted(orderId: string) {
+        return this.updateOrderStatus(orderId, 'completed');
+    }
+
+    static async deleteOrder(orderId: string) {
+        const { error } = await supabase
+            .from('orders')
+            .delete()
+            .eq('id', orderId);
+
+        if (error) {
+            console.error('Error deleting order:', error);
+            throw error;
+        }
+    }
+
     static async getOrderByTracking(trackingNumber: string) {
         const { data, error } = await supabase
             .from('orders')
@@ -88,6 +106,33 @@ export class OrderService {
         return data as Order;
     }
 
+    static async getOrderById(orderId: string) {
+        const { data, error } = await supabase
+            .from('orders')
+            .select(`
+                *,
+                items:order_items (
+                    id,
+                    product_id,
+                    quantity,
+                    unit_price,
+                    products (
+                        name,
+                        images
+                    )
+                )
+            `)
+            .eq('id', orderId)
+            .single();
+
+        if (error) {
+            console.error('Error fetching order by ID:', error);
+            return null;
+        }
+
+        return data as Order;
+    }
+
     static generateTrackingNumber(): string {
         // Format: 7S-XXXX-YYYY (7S = Seven Stitches)
         const timestamp = Date.now().toString(36).toUpperCase().slice(-4);
@@ -104,7 +149,10 @@ export class OrderService {
 
         if (error) throw error;
 
-        const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+        const totalRevenue = orders.reduce((sum, o) => {
+            const isRevenue = ['paid', 'delivered', 'completed'].includes(o.status);
+            return sum + (isRevenue ? (Number(o.total_amount) || 0) : 0);
+        }, 0);
         const totalOrders = orders.length;
         // Mocking 'New Customers' and 'Repeat Rate' as we don't have a strict customer table yet
         // In a real app, we'd query distinct emails or profiles

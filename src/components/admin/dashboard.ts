@@ -237,8 +237,8 @@ export async function renderDashboard(container: HTMLElement) {
                             </li>
                         `;
                     }).join('') : `
-                                                        < li class="text-center text-gray-500 text-sm py-4" > No top products yet.</li>
-                                                            `}
+                                                            <li class="text-center text-gray-500 text-sm py-4">No top products yet.</li>
+                        `}
                     </ul>
                 </div>
             </div>
