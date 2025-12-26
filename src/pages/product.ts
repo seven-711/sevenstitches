@@ -159,6 +159,10 @@ const productId = urlParams.get('id');
                                     <span class="material-symbols-outlined">shopping_cart</span>
                                     Add to Cart
                                 </button>
+                                <button id="buy-now" class="flex-1 h-12 bg-white dark:bg-slate-800 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary/5 dark:hover:bg-primary/10 transition-all flex items-center justify-center gap-2 shadow-sm">
+                                    <span class="material-symbols-outlined">bolt</span>
+                                    Buy Now
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -168,6 +172,7 @@ const productId = urlParams.get('id');
 
                 // Event Listeners
                 const addToCartBtn = document.getElementById('add-to-cart');
+                const buyNowBtn = document.getElementById('buy-now');
                 const quantityInput = document.getElementById('quantity') as HTMLInputElement;
                 const mainImage = document.getElementById('main-image') as HTMLImageElement;
                 const thumbnailBtns = document.querySelectorAll('.thumbnail-btn');
@@ -198,6 +203,12 @@ const productId = urlParams.get('id');
                     const qty = parseInt(quantityInput.value) || 1;
                     CartState.addItem(product, qty);
                     Toast.show('Added to cart!', 'success');
+                });
+
+                buyNowBtn?.addEventListener('click', () => {
+                    const qty = parseInt(quantityInput.value) || 1;
+                    CartState.addItem(product, qty);
+                    window.location.href = '/pages/checkout.html';
                 });
 
 
