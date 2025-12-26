@@ -213,8 +213,8 @@ app.post('/api/confirm-order', async (req, res) => {
                     <html>
                         <body style="font-family: sans-serif; color: #333;">
                             <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee;">
-                                <h1 style="color: #10b981;">Order Confirmed!</h1>
-                                <p>Thank you for your purchase. We are getting your order ready.</p>
+                                <h1 style="color: #10b981;">Order Received!</h1>
+                                <p>Thank you for your purchase. I will get back to you as soon as possible. Thank you for your support!</p>
                                 <p><strong>Order Total:</strong> ₱${totalAmount}</p>
                                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
                                 <p>Follow me for more updates:</p>
@@ -275,6 +275,80 @@ app.post('/api/confirm-order', async (req, res) => {
   } catch (e) {
     console.error('Confirm Order Global Error:', e);
     res.status(500).json({ error: 'Failed to confirm order' });
+  }
+});
+
+// Update Order Status Endpoint (Triggers Emails)
+app.post('/api/update-order-status', async (req, res) => {
+  const { email, orderId, status } = req.body;
+  const apiKey = process.env.BREVO_API_KEY;
+
+  if (!apiKey) return res.status(500).json({ error: 'Missing API Key' });
+
+  // Only send email on 'approved' status for now
+  if (status !== 'approved') {
+    return res.json({ success: true, message: 'Status updated, no email sent' });
+  }
+
+  try {
+    // Reuse sender logic
+    let senderEmail = 'no-reply@sevenstitches.com';
+    try {
+      const senderResponse = await fetch('https://api.brevo.com/v3/senders', {
+        method: 'GET',
+        headers: { 'api-key': apiKey }
+      });
+      const senderData = await senderResponse.json();
+      if (senderData.senders && senderData.senders.length > 0) {
+        const activeSender = senderData.senders.find(s => s.active) || senderData.senders[0];
+        senderEmail = activeSender.email;
+      }
+    } catch (e) {
+      console.warn('Could not fetch senders, using default');
+    }
+
+    const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+      body: JSON.stringify({
+        sender: { name: 'Seven Stitches', email: senderEmail },
+        to: [{ email: email }],
+        subject: `Your Order #${orderId?.slice(0, 8)} Has Been Approved!`,
+        htmlContent: `
+          <html>
+            <body style="font-family: sans-serif; color: #333;">
+              <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h1 style="color: #10b981; text-align: center;">Order Approved!</h1>
+                <p>Hi there,</p>
+                <p>Great news! Your order <strong>#${orderId?.slice(0, 8)}</strong> has been approved by me, July.</p>
+                <p>I am now proceeding with the production/preparation of your items.</p>
+                <p>You will receive another update once your order is ready for shipping or meet-up.</p>
+                <br/>
+                <a href="https://sevenstitches.vercel.app/pages/tracking.html?number=${orderId}" 
+                   style="display: block; width: fit-content; margin: 0 auto; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                   Track Your Order
+                </a>
+                <br/>
+                <p>Thank you for choosing Seven Stitches!</p>
+              </div>
+            </body>
+          </html>
+        `
+      })
+    });
+
+    if (!emailResponse.ok) {
+      const err = await emailResponse.text();
+      console.error('Approval Email Failed:', err);
+    } else {
+      console.log(`Approval email sent to ${email}`);
+    }
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error('Update Status Error:', error);
+    res.status(500).json({ error: 'Failed to trigger email' });
   }
 });
 

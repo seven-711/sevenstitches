@@ -240,8 +240,12 @@ async function init() {
             const email = user.primaryEmailAddress?.emailAddress || (user as any).email;
             if (email) {
                 emailInput.value = email;
-                emailInput.readOnly = true;
-                emailInput.classList.add('opacity-75', 'cursor-not-allowed');
+                // Only disable if NOT a guest
+                const isGuest = user.id && user.id.startsWith('guest-');
+                if (!isGuest) {
+                    emailInput.readOnly = true;
+                    emailInput.classList.add('opacity-75', 'cursor-not-allowed');
+                }
             }
         }
     }

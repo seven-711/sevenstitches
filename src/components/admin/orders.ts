@@ -124,9 +124,9 @@ export async function renderOrders(container: HTMLElement) {
         <div id="order-details-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="window.closeOrderModal()"></div>
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-[#151c2b] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-gray-100 dark:border-gray-700">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-[#151c2b] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-gray-100 dark:border-gray-700 flex flex-col max-h-[85vh]">
                     <!-- Modal Header -->
-                    <div class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-700">
+                    <div class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
                         <h3 class="text-lg font-bold leading-6 text-gray-900 dark:text-white" id="modal-title">Order Details</h3>
                         <button type="button" class="text-gray-400 hover:text-gray-500 focus:outline-none" onclick="window.closeOrderModal()">
                             <span class="material-icons-round">close</span>
@@ -134,15 +134,14 @@ export async function renderOrders(container: HTMLElement) {
                     </div>
                     
                     <!-- Modal Body -->
-                    <div class="px-4 py-5 sm:p-6 space-y-6" id="modal-content">
+                    <div class="px-4 py-5 sm:p-6 space-y-6 overflow-y-auto flex-1" id="modal-content">
                         <!-- Content injected dynamically -->
                     </div>
 
                     <!-- Modal Footer -->
-                    <div class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:px-6 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-end gap-3">
+                    <div class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:px-6 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-end gap-3 flex-shrink-0">
                         <div class="flex items-center gap-2 w-full sm:w-auto">
                             <select id="modal-status-select" class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2">
-                                <option value="pending">Pending</option>
                                 <option value="pending">Pending</option>
                                 <option value="approved">Approved</option>
                                 <option value="paid">Paid</option>
@@ -153,6 +152,10 @@ export async function renderOrders(container: HTMLElement) {
                                 <option value="completed">Completed</option>
                                 <option value="cancelled">Cancelled</option>
                             </select>
+                            
+                            <!-- Approve Action Container (Dynamic) -->
+                            <div id="approve-action-container" class="hidden sm:inline-block"></div>
+
                             <button type="button" class="inline-flex w-full justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 sm:w-auto whitespace-nowrap" onclick="window.handleUpdateStatus()">
                                 Update Status
                             </button>
@@ -331,6 +334,20 @@ export async function renderOrders(container: HTMLElement) {
                     const orderState = orders.find(o => o.id === orderId);
                     if (orderState) orderState.status = newStatus as any;
 
+                    // --- TRIGGER EMAIL IF APPROVED ---
+                    if (newStatus === 'approved' && orderState?.customer_email) {
+                        fetch('/api/update-order-status', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                email: orderState.customer_email,
+                                orderId: orderId,
+                                status: 'approved'
+                            })
+                        }).catch(err => console.error('Failed to trigger approval email', err));
+                    }
+                    // --------------------------------
+
                     // Update Row Badge
                     const rowBadge = document.querySelector(`#order-row-${orderId} .status-badge`);
                     if (rowBadge) {
@@ -361,6 +378,21 @@ export async function renderOrders(container: HTMLElement) {
 
             try {
                 await OrderService.updateOrderStatus(orderId, 'approved');
+
+                // --- TRIGGER EMAIL ---
+                const order = orders.find(o => o.id === orderId);
+                if (order && order.customer_email) {
+                    fetch('/api/update-order-status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: order.customer_email,
+                            orderId: orderId,
+                            status: 'approved'
+                        })
+                    }).catch(err => console.error('Failed to trigger approval email', err));
+                }
+                // ---------------------
 
                 // Refresh Modal if open
                 const modal = document.getElementById('order-details-modal');
