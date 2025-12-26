@@ -211,6 +211,33 @@ app.post('/api/confirm-order', async (req, res) => {
       })
     });
 
+    // 3. Send Admin Notification
+    const adminEmail = 'claridadjulyfranz@gmail.com';
+    await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+      body: JSON.stringify({
+        sender: { name: 'Seven Stitches System', email: senderEmail },
+        to: [{ email: adminEmail }],
+        subject: `[ADMIN] New Order: #${orderId?.slice(0, 8) || 'Check Dashboard'}`,
+        htmlContent: `
+            <html>
+                <body style="font-family: sans-serif; color: #333;">
+                    <h2>New Order Received!</h2>
+                    <p>A new order has been placed on the shop.</p>
+                    <ul>
+                        <li><strong>Order ID:</strong> ${orderId}</li>
+                        <li><strong>Customer Email:</strong> ${email}</li>
+                        <li><strong>Total Amount:</strong> ₱${totalAmount}</li>
+                        <li><strong>Coupon Used:</strong> ${couponCode || 'None'}</li>
+                    </ul>
+                    <p>Please check the admin dashboard for full details.</p>
+                </body>
+            </html>
+        `
+      })
+    }).catch(e => console.error('Admin Notification Failed:', e));
+
     res.json({ success: true });
   } catch (e) {
     console.error('Confirm Order Error:', e);

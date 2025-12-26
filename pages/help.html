@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Help Center - Seven Stitches</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#111827",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-neutral-900 dark:text-neutral-50 min-h-screen flex flex-col">
+
+    <!-- Header (Consistent with other pages) -->
+    <header
+        class="sticky top-0 z-50 w-full border-b border-neutral-200 dark:border-neutral-800 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-20 items-center justify-between">
+                <a href="/"
+                    class="flex items-center gap-3 text-neutral-900 dark:text-white group hover:opacity-80 transition-opacity">
+                    <img src="/logo.png" alt="Seven Stitches Logo"
+                        class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Page Header -->
+            <div class="mb-10 border-b border-neutral-200 dark:border-neutral-800 pb-8 text-center md:text-left">
+                <span class="text-primary font-semibold tracking-wide uppercase text-sm">Support</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-3">
+                    Help Center
+                </h1>
+                <p class="text-neutral-500 dark:text-neutral-400 text-lg">
+                    Frequently asked questions and guides to help you with your order.
+                </p>
+            </div>
+
+            <div class="space-y-16">
+                <!-- Section: Ordering -->
+                <section class="scroll-mt-32" id="ordering">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">shopping_bag</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Ordering & Custom Requests</h2>
+                    </div>
+                    <div class="space-y-6 pl-0 md:pl-12">
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                How do I place a custom order?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <p>For custom commissions (like specific colors, sizes, or designs not listed), please
+                                    reach out to me directly via Instagram or Facebook Messenger. We'll discuss your
+                                    design, timeline, and pricing before you place a deposit.</p>
+                            </div>
+                        </details>
+
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                How long does it take to make an item?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <p>Production time varies depending on the complexity of the item and my current
+                                    workload (as I am a full-time student). Small items like keychains may take 1-3
+                                    days, while larger items like cardigans or plushies can take 1-2 weeks. I will
+                                    provide an estimated completion date when you order.</p>
+                            </div>
+                        </details>
+                    </div>
+                </section>
+
+                <!-- Section: Payment -->
+                <section class="scroll-mt-32" id="payment">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">payments</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Payment</h2>
+                    </div>
+                    <div class="space-y-6 pl-0 md:pl-12">
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                What payment methods do you accept?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <p>We primarily accept <strong>GCash</strong> for downpayments. The remaining balance
+                                    can be paid via GCash or <strong>Cash on Delivery (COD)</strong> during the meet-up.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                Do I need to pay a downpayment?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <p>Yes, a <strong>50% non-refundable downpayment</strong> is required for all custom
+                                    orders and reserved items. This covers the cost of materials and secures your slot
+                                    in my queue.</p>
+                            </div>
+                        </details>
+                    </div>
+                </section>
+
+                <!-- Section: Delivery -->
+                <section class="scroll-mt-32" id="delivery">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">location_on</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Delivery & Meet-ups</h2>
+                    </div>
+                    <div class="space-y-6 pl-0 md:pl-12">
+                        <div
+                            class="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-xl border border-blue-100 dark:border-blue-800 mb-6">
+                            <p class="text-sm text-neutral-700 dark:text-neutral-300 flex items-start gap-2">
+                                <span class="material-symbols-outlined text-primary text-lg mt-0.5">info</span>
+                                <span><strong>Note:</strong> We currently only serve customers within Cagayan de Oro
+                                    City via meet-ups. Shipping via courier is not valid.</span>
+                            </p>
+                        </div>
+
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                Where can we meet up?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <p class="mb-3">We have designated safe meet-up spots in CDO:</p>
+                                <ul class="list-disc list-inside space-y-1 ml-2">
+                                    <li>Centrio Mall / Gaisano City Mall</li>
+                                    <li>SM Downtown</li>
+                                    <li>Limketkai Center</li>
+                                    <li>Capitol University / USTP</li>
+                                    <li>Cogon / Ororama</li>
+                                    <li>China Village Zayas Carmen</li>
+                                </ul>
+                            </div>
+                        </details>
+
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                Can I reschedule my meet-up?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <p>Yes! Please notify me at least <strong>2 hours</strong> before our scheduled time.
+                                    Missed meet-ups without notice may incur a small rescheduling fee.</p>
+                            </div>
+                        </details>
+                    </div>
+                </section>
+
+                <!-- Section: Care -->
+                <section class="scroll-mt-32" id="care">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                            <span class="material-symbols-outlined">checkroom</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Product Care</h2>
+                    </div>
+                    <div class="space-y-6 pl-0 md:pl-12">
+                        <details
+                            class="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 open:shadow-md transition-all">
+                            <summary class="flex items-center justify-between p-5 font-bold cursor-pointer select-none">
+                                How do I wash my crochet items?
+                                <span
+                                    class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                            </summary>
+                            <div class="px-5 pb-5 text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                                <ul class="space-y-2">
+                                    <li><strong>Hand Wash (Recommended):</strong> Soak in cool water with mild
+                                        detergent. Gently squeeze (do not wring). Lay flat to dry on a towel.</li>
+                                    <li><strong>Machine Wash:</strong> Place in a mesh laundry bag and use the
+                                        delicate/gentle cycle with cold water. Air dry only (no dryer).</li>
+                                </ul>
+                            </div>
+                        </details>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Contact Box -->
+            <div class="mt-20 border-t border-neutral-200 dark:border-neutral-800 pt-10">
+                <div
+                    class="flex flex-col items-center gap-6 p-8 rounded-2xl bg-primary text-white shadow-lg text-center">
+                    <div class="flex flex-col gap-2">
+                        <h4 class="font-bold text-2xl">Still need help?</h4>
+                        <p class="text-blue-100 mb-2">I am always happy to answer your questions. Send me a message!</p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="https://www.facebook.com/yhoung11" target="_blank"
+                            class="flex items-center gap-2 bg-white text-[#0084FF] px-4 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-sm">
+                            <svg class="size-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.464 5.532 3.766 7.218V22l3.434-1.884c.883.245 1.815.385 2.8.385 5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.32 12.015l-2.434-2.597-4.75 2.597 5.222-5.54 2.433 2.598 4.75-2.598-5.22 5.54z" />
+                            </svg>
+                            <span>Messenger</span>
+                        </a>
+                        <a href="https://www.instagram.com/underthe_sky7/" target="_blank"
+                            class="flex items-center gap-2 bg-white text-[#E1306C] px-4 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all shadow-sm">
+                            <svg class="size-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="py-8 text-center border-t border-neutral-200 dark:border-neutral-800">
+        <p class="text-xs text-neutral-400">© 2022 Seven Stitches | CDO, MisOr</p>
+    </footer>
+
+</body>
+
+</html>

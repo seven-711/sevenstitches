@@ -164,7 +164,7 @@ export async function renderDashboard(container: HTMLElement) {
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
             <!-- Recent Orders -->
             <div class="lg:col-span-2 bg-surface-light dark:bg-surface-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">

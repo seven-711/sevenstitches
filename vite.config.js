@@ -21,6 +21,8 @@ export default defineConfig({
                 admin: 'pages/admin.html',
                 terms: 'pages/terms.html',
                 privacy: 'pages/privacy.html',
+                help: 'pages/help.html',
+                contact: 'pages/contact.html',
             },
         },
     },
