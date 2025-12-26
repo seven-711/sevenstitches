@@ -3,8 +3,11 @@ import { clerk } from '../lib/clerk';
 import { Toast } from './toast';
 
 import { CategoryService } from '../services/category.service';
+import { ProductService } from '../services/product.service';
 
 export class AppHeader extends HTMLElement {
+  private products: any[] = [];
+
   constructor() {
     super();
   }
@@ -36,14 +39,20 @@ export class AppHeader extends HTMLElement {
             </nav>
           </div>
           <div class="flex flex-1 justify-end gap-4 items-center">
-            <label class="hidden md:flex flex-col min-w-40 h-10 max-w-64 w-full">
-              <div class="flex w-full flex-1 items-stretch rounded-full h-full bg-[#e2e8f0] dark:bg-[#1e293b] overflow-hidden focus-within:ring-2 focus-within:ring-primary/50">
-                <div class="text-[#64748b] dark:text-[#94a3b8] flex items-center justify-center pl-4 pr-2">
-                  <span class="material-symbols-outlined text-[20px]">search</span>
+             <div class="relative hidden md:block max-w-64 w-full">
+                <label class="flex flex-col w-full h-10">
+                  <div class="flex w-full flex-1 items-stretch rounded-full h-full bg-[#e2e8f0] dark:bg-[#1e293b] overflow-hidden focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+                    <div class="text-[#64748b] dark:text-[#94a3b8] flex items-center justify-center pl-4 pr-2">
+                      <span class="material-symbols-outlined text-[20px]">search</span>
+                    </div>
+                    <input id="search-input" class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-[#64748b] dark:placeholder:text-[#94a3b8] dark:text-white h-full px-0" placeholder="Search..." autocomplete="off" />
+                  </div>
+                </label>
+                <!-- Search Results Dropdown -->
+                <div id="search-results" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 rounded-md shadow-xl overflow-hidden hidden z-[100]">
+                  <!-- Results populated dinamically -->
                 </div>
-                <input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-[#64748b] dark:placeholder:text-[#94a3b8] dark:text-white h-full px-0" placeholder="Search patterns..." />
-              </div>
-            </label>
+            </div>
             <div class="flex gap-2 relative">
               <a href="/pages/cart.html" class="relative flex size-10 items-center justify-center rounded-full bg-[#e2e8f0] dark:bg-[#1e293b] hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors">
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
@@ -55,7 +64,7 @@ export class AppHeader extends HTMLElement {
                   </button>
                   
                   <!-- User Dropdown (Only shown when logged in) -->
-                  <div id="user-dropdown" class="absolute top-12 right-0 w-48 bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-2 hidden z-[100]">
+                  <div id="user-dropdown" class="absolute top-12 right-0 w-48 bg-white dark:bg-[#1e293b] border border-gray-200 dark:border-gray-700 rounded-md shadow-xl p-2 hidden z-[100]">
                       <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-700 mb-2">
                           <p id="header-user-email" class="text-xs font-bold truncate">user@example.com</p>
                       </div>
@@ -99,6 +108,74 @@ export class AppHeader extends HTMLElement {
     this.setupAuthListeners();
     this.setupMobileMenu();
     this.loadCategories();
+    this.setupSearchListener();
+
+    // Load products for search
+    ProductService.getProducts().then(products => {
+      this.products = products;
+    }).catch(err => console.error('Failed to load products for search', err));
+  }
+
+  setupSearchListener() {
+    const searchInput = this.querySelector('#search-input') as HTMLInputElement;
+    const resultsContainer = this.querySelector('#search-results');
+
+    if (searchInput && resultsContainer) {
+      // Debounce setup could be added here for performance if plenty of products
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (query.length < 2) {
+          resultsContainer.classList.add('hidden');
+          return;
+        }
+
+        const matches = this.products.filter(p => p.name.toLowerCase().includes(query)).slice(0, 5);
+
+        if (matches.length > 0) {
+          resultsContainer.innerHTML = matches.map(product => `
+                    <a href="/pages/product.html?id=${product.id}" class="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-none">
+                        <img src="${product.images?.[0] || 'https://placehold.co/40'}" class="w-10 h-10 rounded-md object-cover bg-gray-100" alt="${product.name}">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">${product.name}</p>
+                            <p class="text-xs text-primary">₱${product.price.toFixed(2)}</p>
+                        </div>
+                    </a>
+                 `).join('') + `
+                    <a href="/pages/shop.html?search=${encodeURIComponent(query)}" class="block p-3 text-center text-xs font-bold text-primary bg-gray-50/50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        View all results for "${query}"
+                    </a>
+                 `;
+          resultsContainer.classList.remove('hidden');
+        } else {
+          resultsContainer.innerHTML = `<div class="p-3 text-sm text-gray-500 text-center">No results found</div>`;
+          resultsContainer.classList.remove('hidden');
+        }
+      });
+
+      // Redirect on Enter
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const query = searchInput.value.trim();
+          if (query) {
+            window.location.href = `/pages/shop.html?search=${encodeURIComponent(query)}`;
+          }
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target as Node) && !resultsContainer.contains(e.target as Node)) {
+          resultsContainer.classList.add('hidden');
+        }
+      });
+
+      // Re-open if focused and has value
+      searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim().length >= 2) {
+          resultsContainer.classList.remove('hidden');
+        }
+      });
+    }
   }
 
   setupMobileMenu() {
