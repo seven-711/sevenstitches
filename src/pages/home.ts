@@ -178,6 +178,12 @@ async function initHomepage() {
             heroShopBtn.textContent = 'Shop This Item';
         }
 
+        const heroBgLink = document.getElementById('hero-bg-link') as HTMLAnchorElement;
+        if (heroBgLink) {
+            heroBgLink.href = `/pages/product.html?id=${product.id}`;
+        }
+
+
         // 3. Update Theme
         const newTheme = getProductTheme(product);
         applyTheme(newTheme);
