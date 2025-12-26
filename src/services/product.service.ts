@@ -167,4 +167,19 @@ export class ProductService {
             .map(id => products.find(p => p.id === id))
             .filter((p): p is Product => !!p);
     }
+    static async getProductsByIds(ids: string[]): Promise<Product[]> {
+        if (ids.length === 0) return [];
+
+        const { data, error } = await supabase
+            .from('products')
+            .select(`
+                *,
+                categories ( name )
+            `)
+            .in('id', ids)
+            .eq('status', 'active');
+
+        if (error) throw error;
+        return data as Product[];
+    }
 }

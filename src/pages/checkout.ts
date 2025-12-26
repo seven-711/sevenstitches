@@ -30,44 +30,85 @@ let appliedCoupon: { code: string; percent: number } | null = null;
 
 
 // ... Rest of the existing logic (Render Summary, Coupon, etc.) ...
-function renderOrderSummary() {
+import { ProductService } from '../services/product.service';
+
+// ... (Zod schema and other vars remain same)
+
+async function renderOrderSummary() {
     const items = CartService.getItems();
     const subtotal = CartService.getTotal();
-    let tax = 0; // Tax set to 0 as requested
+    let tax = 0;
     let total = subtotal + tax;
 
     if (itemsContainer) {
         if (items.length === 0) {
             itemsContainer.innerHTML = '<p class="text-center text-text-muted">Your cart is empty.</p>';
             if (placeOrderBtn) {
-                // We keep it enabled to show the error toast when clicked
-                (placeOrderBtn as HTMLButtonElement).disabled = false;
+                (placeOrderBtn as HTMLButtonElement).disabled = true; // Disable if empty
             }
         } else {
-            itemsContainer.innerHTML = items.map(item => {
-                const imageSrc = item.images?.[0] || '';
-                const imageElement = imageSrc
-                    ? `<img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover" />`
-                    : `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-400">
-                        <span class="material-symbols-outlined text-lg">inventory_2</span>
-                       </div>`;
+            // Show loading state or existing items with validation pending
+            if (placeOrderBtn) (placeOrderBtn as HTMLButtonElement).disabled = true; // Validate first
 
-                return `
-                <div class="flex gap-4">
-                    <div class="w-20 h-20 shrink-0 rounded-lg bg-gray-100 overflow-hidden relative">
-                        ${imageElement}
-                        <span class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-bl-lg">x${item.quantity}</span>
-                    </div>
-                    <div class="flex flex-col justify-between flex-1">
-                        <div>
-                            <h4 class="font-bold text-sm leading-tight mb-1 dark:text-white">${item.name}</h4>
-                            <p class="text-xs text-text-muted">${(item as any).categories?.name || 'Product'}</p>
+            try {
+                // Fetch fresh data
+                const freshProducts = await ProductService.getProductsByIds(items.map(i => i.id));
+                let hasStockIssue = false;
+
+                itemsContainer.innerHTML = items.map(item => {
+                    const freshP = freshProducts.find(p => p.id === item.id);
+                    const currentStock = freshP ? freshP.inventory_count : 0;
+                    const isOutOfStock = currentStock === 0;
+                    const isLowStock = !isOutOfStock && item.quantity > currentStock;
+
+                    if (isOutOfStock || isLowStock) hasStockIssue = true;
+
+                    const imageSrc = item.images?.[0] || '';
+                    const imageElement = imageSrc
+                        ? `<img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover ${isOutOfStock ? 'grayscale opacity-50' : ''}" />`
+                        : `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-400">
+                            <span class="material-symbols-outlined text-lg">inventory_2</span>
+                           </div>`;
+
+                    let errorBadge = '';
+                    if (isOutOfStock) {
+                        errorBadge = `<p class="text-[10px] font-bold text-red-600 bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded w-fit mt-1">OUT OF STOCK</p>`;
+                    } else if (isLowStock) {
+                        errorBadge = `<p class="text-[10px] font-bold text-orange-600 bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 rounded w-fit mt-1">ONLY ${currentStock} LEFT</p>`;
+                    }
+
+                    return `
+                    <div class="flex gap-4 ${isOutOfStock ? 'opacity-75' : ''}">
+                        <div class="w-20 h-20 shrink-0 rounded-lg bg-gray-100 overflow-hidden relative border ${isOutOfStock ? 'border-red-300' : 'border-transparent'}">
+                            ${imageElement}
+                            <span class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-bl-lg">x${item.quantity}</span>
                         </div>
-                        <p class="font-bold dark:text-white">₱${(item.price * item.quantity).toFixed(2)}</p>
+                        <div class="flex flex-col justify-between flex-1">
+                            <div>
+                                <h4 class="font-bold text-sm leading-tight mb-1 dark:text-white ${isOutOfStock ? 'line-through text-gray-500' : ''}">${item.name}</h4>
+                                <p class="text-xs text-text-muted mb-1">${(item as any).categories?.name || 'Product'}</p>
+                                ${errorBadge}
+                            </div>
+                            <p class="font-bold dark:text-white">₱${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
                     </div>
-                </div>
-            `}).join('');
-            if (placeOrderBtn) (placeOrderBtn as HTMLButtonElement).disabled = false;
+                `}).join('');
+
+                if (placeOrderBtn) {
+                    (placeOrderBtn as HTMLButtonElement).disabled = hasStockIssue;
+                    if (hasStockIssue) {
+                        Toast.show('Some items are unavailable. Please update your cart.', 'error');
+                    }
+                }
+
+            } catch (e) {
+                console.error("Stock validation failed", e);
+                // Fallback: Enable but maybe warn? Or keep disabled? 
+                // Creating a simplified view if validation fails (e.g. offline)
+                // For safety, we might keep it enabled but relying on backend check.
+                // But user requested specific UX. Let's assume network is fine.
+                if (placeOrderBtn) (placeOrderBtn as HTMLButtonElement).disabled = false;
+            }
         }
     }
 
@@ -286,13 +327,25 @@ if (placeOrderBtn) {
         // Format Address for Backend (State, City, Street)
         const formattedAddress = `MEET-UP: ${formData.meetupLocation} | DATE: ${formData.meetupDate} | TIME: ${formData.meetupTime} | CDO`;
 
-        // Stock Validation
+        // Stock Validation (Fresh Check)
         const cartItems = CartService.getItems();
-        for (const item of cartItems) {
-            if (item.quantity > (item.inventory_count || 0)) {
-                Toast.show(`Not enough stock for ${item.name}. Only ${item.inventory_count || 0} left.`, 'error');
-                return;
+        try {
+            const freshProducts = await ProductService.getProductsByIds(cartItems.map(i => i.id));
+            for (const item of cartItems) {
+                const freshP = freshProducts.find(p => p.id === item.id);
+                const currentStock = freshP ? freshP.inventory_count : 0;
+
+                if (item.quantity > currentStock) {
+                    Toast.show(`Stock changed. ${item.name}: Only ${currentStock} left.`, 'error');
+                    renderOrderSummary(); // Re-render to show badges and disable button
+                    return;
+                }
             }
+        } catch (e) {
+            console.error('Final stock check failed', e);
+            // Decide policy: fail safe?
+            Toast.show('Unable to verify stock. Please try again.', 'error');
+            return;
         }
 
         const orderDetails: Partial<OrderDetails> = {

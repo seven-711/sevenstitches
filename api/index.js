@@ -163,27 +163,46 @@ app.post('/api/validate-coupon', async (req, res) => {
 
 // Confirm Order Endpoint
 app.post('/api/confirm-order', async (req, res) => {
+  console.log('Received /api/confirm-order request', req.body);
   const { email, orderId, couponCode, totalAmount } = req.body;
   const apiKey = process.env.BREVO_API_KEY;
+
+  if (!apiKey) {
+    console.error('BREVO_API_KEY is missing in environment variables');
+    return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
+  }
 
   try {
     // 1. Mark Coupon Used
     if (couponCode) {
+      console.log(`Marking coupon ${couponCode} as used`);
       await supabase
         .from('discount_codes')
         .update({ is_used: true })
         .eq('code', couponCode);
     }
 
-    // 2. Send Confirmation Email
-    // Fetch sender logic again or reuse function if refactored
+    // 2. Fetch Valid Sender (reuse logic from subscribe)
     let senderEmail = 'no-reply@sevenstitches.com';
+    let senderName = 'Seven Stitches';
     try {
-      // For speed, just use the hardcoded one if it works, or fetch briefly
-      // We can assume the same sender logic applies.
-    } catch (e) { }
+      const senderResponse = await fetch('https://api.brevo.com/v3/senders', {
+        method: 'GET',
+        headers: { 'api-key': apiKey }
+      });
+      const senderData = await senderResponse.json();
+      if (senderData.senders && senderData.senders.length > 0) {
+        const activeSender = senderData.senders.find(s => s.active) || senderData.senders[0];
+        senderEmail = activeSender.email;
+        console.log('Using sender:', senderEmail);
+      }
+    } catch (e) {
+      console.warn('Could not fetch senders, using default', e);
+    }
 
-    await fetch('https://api.brevo.com/v3/smtp/email', {
+    // 3. Send Confirmation Email to Customer
+    console.log(`Sending confirmation email to ${email}`);
+    const customerEmailReq = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
       body: JSON.stringify({
@@ -195,14 +214,13 @@ app.post('/api/confirm-order', async (req, res) => {
                         <body style="font-family: sans-serif; color: #333;">
                             <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee;">
                                 <h1 style="color: #10b981;">Order Confirmed!</h1>
-                                <p>Thank you for your purchase. We are getting your patterns ready.</p>
+                                <p>Thank you for your purchase. We are getting your order ready.</p>
                                 <p><strong>Order Total:</strong> ₱${totalAmount}</p>
                                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-                                <p>Follow us for more updates:</p>
+                                <p>Follow me for more updates:</p>
                                 <p>
-                                    <a href="https://facebook.com/sevenstitches" style="color: #2563eb; text-decoration: none; margin-right: 15px;">Facebook</a> 
-                                    <a href="https://instagram.com/sevenstitches" style="color: #e1306c; text-decoration: none; margin-right: 15px;">Instagram</a> 
-                                    <a href="https://tiktok.com/@sevenstitches" style="color: #000000; text-decoration: none;">TikTok</a>
+                                    <a href="https://www.facebook.com/Sevens7itches/" style="color: #2563eb; text-decoration: none; margin-right: 15px;">Facebook</a> 
+                                    <a href="https://www.instagram.com/sevens7itches/" style="color: #e1306c; text-decoration: none; margin-right: 15px;">Instagram</a> 
                                 </p>
                             </div>
                         </body>
@@ -211,9 +229,17 @@ app.post('/api/confirm-order', async (req, res) => {
       })
     });
 
-    // 3. Send Admin Notification
+    if (!customerEmailReq.ok) {
+      const errorText = await customerEmailReq.text();
+      console.error('Customer email failed:', errorText);
+    } else {
+      console.log('Customer email sent successfully.');
+    }
+
+    // 4. Send Admin Notification
     const adminEmail = 'claridadjulyfranz@gmail.com';
-    await fetch('https://api.brevo.com/v3/smtp/email', {
+    console.log(`Sending admin notification to ${adminEmail}`);
+    const adminEmailReq = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
       body: JSON.stringify({
@@ -236,11 +262,18 @@ app.post('/api/confirm-order', async (req, res) => {
             </html>
         `
       })
-    }).catch(e => console.error('Admin Notification Failed:', e));
+    });
+
+    if (!adminEmailReq.ok) {
+      const errorText = await adminEmailReq.text();
+      console.error('Admin email failed:', errorText);
+    } else {
+      console.log('Admin email sent successfully.');
+    }
 
     res.json({ success: true });
   } catch (e) {
-    console.error('Confirm Order Error:', e);
+    console.error('Confirm Order Global Error:', e);
     res.status(500).json({ error: 'Failed to confirm order' });
   }
 });
