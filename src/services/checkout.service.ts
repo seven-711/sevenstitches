@@ -36,6 +36,9 @@ export class CheckoutService {
         const totalAmount = CartState.getTotal();
 
         try {
+            // 1.5 Fetch fresh product data for accurate Pre-order status
+            const freshProducts = await ProductService.getProductsByIds(items.map(i => i.id));
+
             // 1. Create Order
             const { data: order, error: orderError } = await supabase
                 .from('orders')
@@ -54,12 +57,18 @@ export class CheckoutService {
             if (orderError) throw orderError;
 
             // 2. Create Order Items
-            const orderItems = items.map(item => ({
-                order_id: order.id,
-                product_id: item.id,
-                quantity: item.quantity,
-                unit_price: item.price
-            }));
+            const orderItems = items.map(item => {
+                const product = freshProducts.find(p => p.id === item.id);
+                const isPreOrder = (product?.inventory_count || 0) <= 0;
+
+                return {
+                    order_id: order.id,
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    unit_price: item.price,
+                    is_preorder: isPreOrder
+                };
+            });
 
             const { error: itemsError } = await supabase
                 .from('order_items')

@@ -141,9 +141,30 @@ const productId = urlParams.get('id');
 
                                 <p class="text-2xl font-bold text-primary">₱${Number(product.price).toFixed(2)}</p>
                                 <div class="mt-2 text-sm">
-                                    <span class="${(product.inventory_count || 0) < 5 ? 'text-red-500 font-bold' : 'text-gray-500'}">
-                                        ${product.inventory_count || 0} in stock
-                                    </span>
+                                    ${(product.inventory_count || 0) > 0
+                        ? `<span class="${(product.inventory_count || 0) < 5 ? 'text-red-500 font-bold' : 'text-gray-500'}">
+                                            ${product.inventory_count || 0} in stock
+                                           </span>`
+                        : (() => {
+                            const today = new Date();
+                            const start = new Date(today); start.setDate(today.getDate() + 7);
+                            const end = new Date(today); end.setDate(today.getDate() + 14);
+
+                            // Manual formatting to match "3 - 14 Jan" style if months match, or "3 Jan - 14 Jan" if not.
+                            // Simpler approach: "d MMM" - "d MMM"
+                            const endStr = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(end);
+                            // If same month for simple logic:
+                            const dateRange = `${start.getDate()} - ${endStr}`;
+
+                            return `
+                                            <div class="flex items-center gap-2 text-teal-600 font-medium">
+                                                <span class="material-symbols-outlined text-[20px]">local_shipping</span>
+                                                <span>(Pre-order) Get by ${dateRange}</span>
+                                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                                            </div>
+                                            `;
+                        })()
+                    }
                                 </div>
                             </div>
                             
@@ -152,15 +173,21 @@ const productId = urlParams.get('id');
                             </p>
                             
                             <div class="flex gap-4">
-                                <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-12 px-4 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
+                                <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-12 px-2 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
+                                     <button id="qty-minus" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500">
+                                        <span class="material-symbols-outlined text-sm">remove</span>
+                                     </button>
                                      <input type="number" id="quantity" value="1" min="1" class="w-12 bg-transparent border-none text-center focus:ring-0 p-0" />
+                                     <button id="qty-plus" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500">
+                                        <span class="material-symbols-outlined text-sm">add</span>
+                                     </button>
                                 </div>
-                                <button id="add-to-cart" class="flex-1 h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-full shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined">shopping_cart</span>
+                                <button id="add-to-cart" class="flex-1 h-12 bg-primary hover:bg-primary/90 text-white text-sm md:text-base font-bold rounded-md shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-[15px] md:text-[24px]">shopping_cart</span>
                                     Add to Cart
                                 </button>
-                                <button id="buy-now" class="flex-1 h-12 bg-white dark:bg-slate-800 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary/5 dark:hover:bg-primary/10 transition-all flex items-center justify-center gap-2 shadow-sm">
-                                    <span class="material-symbols-outlined">bolt</span>
+                                <button id="buy-now" class="flex-1 h-12 bg-white dark:bg-slate-800 border-2 border-primary text-primary text-sm md:text-base font-bold rounded-md hover:bg-primary/5 dark:hover:bg-primary/10 transition-all flex items-center justify-center gap-2 shadow-sm">
+                                    <span class="material-symbols-outlined text-[18px] md:text-[24px]">bolt</span>
                                     Buy Now
                                 </button>
                             </div>
@@ -174,8 +201,26 @@ const productId = urlParams.get('id');
                 const addToCartBtn = document.getElementById('add-to-cart');
                 const buyNowBtn = document.getElementById('buy-now');
                 const quantityInput = document.getElementById('quantity') as HTMLInputElement;
+                const qtyMinusBtn = document.getElementById('qty-minus');
+                const qtyPlusBtn = document.getElementById('qty-plus');
+
                 const mainImage = document.getElementById('main-image') as HTMLImageElement;
                 const thumbnailBtns = document.querySelectorAll('.thumbnail-btn');
+
+                // Quantity Logic
+                if (quantityInput && qtyMinusBtn && qtyPlusBtn) {
+                    qtyMinusBtn.addEventListener('click', () => {
+                        let val = parseInt(quantityInput.value) || 1;
+                        if (val > 1) {
+                            quantityInput.value = (val - 1).toString();
+                        }
+                    });
+
+                    qtyPlusBtn.addEventListener('click', () => {
+                        let val = parseInt(quantityInput.value) || 1;
+                        quantityInput.value = (val + 1).toString();
+                    });
+                }
 
                 // Thumbnail Click Logic
                 thumbnailBtns.forEach(btn => {

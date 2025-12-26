@@ -58,36 +58,42 @@ async function renderOrderSummary() {
                 itemsContainer.innerHTML = items.map(item => {
                     const freshP = freshProducts.find(p => p.id === item.id);
                     const currentStock = freshP ? freshP.inventory_count : 0;
-                    const isOutOfStock = currentStock === 0;
-                    const isLowStock = !isOutOfStock && item.quantity > currentStock;
 
-                    if (isOutOfStock || isLowStock) hasStockIssue = true;
+                    // Pre-order logic: If stock is 0, it's a pre-order.
+                    const isPreOrder = currentStock <= 0;
+                    // Low stock logic: If has stock but not enough.
+                    const isLowStock = !isPreOrder && item.quantity > currentStock;
+
+                    // Only block if LOW stock (partial availability conflict), but allow Pre-order (0 stock)
+                    if (isLowStock) hasStockIssue = true;
 
                     const imageSrc = item.images?.[0] || '';
                     const imageElement = imageSrc
-                        ? `<img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover ${isOutOfStock ? 'grayscale opacity-50' : ''}" />`
+                        ? `<img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover ${isLowStock ? 'grayscale opacity-50' : ''}" />`
                         : `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-400">
                             <span class="material-symbols-outlined text-lg">inventory_2</span>
                            </div>`;
 
-                    let errorBadge = '';
-                    if (isOutOfStock) {
-                        errorBadge = `<p class="text-[10px] font-bold text-red-600 bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded w-fit mt-1">OUT OF STOCK</p>`;
+                    let statusBadge = '';
+                    if (isPreOrder) {
+                        statusBadge = `<p class="flex items-center gap-1 text-[10px] font-bold text-teal-600 bg-teal-100 dark:bg-teal-900/30 px-2 py-0.5 rounded w-fit mt-1">
+                            <span class="material-symbols-outlined text-[10px]">local_shipping</span> PRE-ORDER
+                        </p>`;
                     } else if (isLowStock) {
-                        errorBadge = `<p class="text-[10px] font-bold text-orange-600 bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 rounded w-fit mt-1">ONLY ${currentStock} LEFT</p>`;
+                        statusBadge = `<p class="text-[10px] font-bold text-orange-600 bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 rounded w-fit mt-1">ONLY ${currentStock} LEFT</p>`;
                     }
 
                     return `
-                    <div class="flex gap-4 ${isOutOfStock ? 'opacity-75' : ''}">
-                        <div class="w-20 h-20 shrink-0 rounded-lg bg-gray-100 overflow-hidden relative border ${isOutOfStock ? 'border-red-300' : 'border-transparent'}">
+                    <div class="flex gap-4">
+                        <div class="w-20 h-20 shrink-0 rounded-lg bg-gray-100 overflow-hidden relative border ${isLowStock ? 'border-red-300' : 'border-transparent'}">
                             ${imageElement}
                             <span class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-bl-lg">x${item.quantity}</span>
                         </div>
                         <div class="flex flex-col justify-between flex-1">
                             <div>
-                                <h4 class="font-bold text-sm leading-tight mb-1 dark:text-white ${isOutOfStock ? 'line-through text-gray-500' : ''}">${item.name}</h4>
+                                <h4 class="font-bold text-sm leading-tight mb-1 dark:text-white ${isLowStock ? 'text-gray-500' : ''}">${item.name}</h4>
                                 <p class="text-xs text-text-muted mb-1">${(item as any).categories?.name || 'Product'}</p>
-                                ${errorBadge}
+                                ${statusBadge}
                             </div>
                             <p class="font-bold dark:text-white">₱${(item.price * item.quantity).toFixed(2)}</p>
                         </div>
@@ -339,7 +345,9 @@ if (placeOrderBtn) {
                 const freshP = freshProducts.find(p => p.id === item.id);
                 const currentStock = freshP ? freshP.inventory_count : 0;
 
-                if (item.quantity > currentStock) {
+                // ALLOW PRE-ORDER: If currentStock is <= 0, it's allowed.
+                // REJECT LOW STOCK: If currentStock > 0 but < item.quantity, reject.
+                if (currentStock > 0 && item.quantity > currentStock) {
                     Toast.show(`Stock changed. ${item.name}: Only ${currentStock} left.`, 'error');
                     renderOrderSummary(); // Re-render to show badges and disable button
                     return;

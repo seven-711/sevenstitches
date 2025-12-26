@@ -1,4 +1,8 @@
-import '../components/header';
+import { AppHeader } from '../components/header';
+
+if (!customElements.get('app-header')) {
+    customElements.define('app-header', AppHeader);
+}
 import { OrderService, Order } from '../services/order.service';
 import { ReviewService } from '../services/review.service';
 import { AuthService } from '../services/auth.service';

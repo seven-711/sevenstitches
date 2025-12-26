@@ -44,40 +44,46 @@ async function renderCart() {
             cartContainer.innerHTML = items.map(item => {
                 const freshP = freshProducts.find(p => p.id === item.id);
                 const currentStock = freshP ? freshP.inventory_count : 0;
-                const isOutOfStock = currentStock === 0;
-                const isLowStock = !isOutOfStock && item.quantity > currentStock;
 
-                if (isOutOfStock || isLowStock) hasStockIssue = true;
+                // Pre-order Config: Stock <= 0 is Pre-order
+                const isPreOrder = currentStock <= 0;
+
+                // Low Stock Issue: Stock > 0 but not enough for quantity
+                const isLowStock = currentStock > 0 && item.quantity > currentStock;
+
+                // Only block if there is a low stock issue (partial availability). 
+                // Pre-orders (0 stock) are allowed.
+                if (isLowStock) hasStockIssue = true;
 
                 const imageSrc = item.images?.[0] || '';
                 const imageElement = imageSrc
-                    ? `<img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover ${isOutOfStock ? 'grayscale opacity-50' : ''}" />`
+                    ? `<img src="${imageSrc}" alt="${item.name}" class="w-full h-full object-cover ${isPreOrder ? '' : ''}" />`
                     : `<div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-400">
                         <span class="material-symbols-outlined text-2xl">inventory_2</span>
                        </div>`;
 
                 let errorBadge = '';
-                if (isOutOfStock) {
-                    errorBadge = `<p class="text-[10px] font-bold text-red-600 bg-red-100 dark:bg-red-900/30 px-2 py-0.5 rounded w-fit mt-1">OUT OF STOCK</p>`;
+                if (isPreOrder) {
+                    errorBadge = `<p class="text-[10px] font-bold text-teal-600 bg-teal-100 dark:bg-teal-900/30 px-2 py-0.5 rounded w-fit mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[10px]">local_shipping</span> PRE-ORDER</p>`;
                 } else if (isLowStock) {
                     errorBadge = `<p class="text-[10px] font-bold text-orange-600 bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 rounded w-fit mt-1">ONLY ${currentStock} LEFT</p>`;
                 }
 
                 return `
-                <div class="flex gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-red-200 dark:border-red-900/30' : 'border-gray-100 dark:border-slate-800'} items-center ${isOutOfStock ? 'opacity-75' : ''}">
+                <div class="flex gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border ${isLowStock ? 'border-orange-200 dark:border-orange-900/30' : (isPreOrder ? 'border-teal-200 dark:border-teal-900/30' : 'border-gray-100 dark:border-slate-800')} items-center">
                     <div class="size-20 bg-gray-100 rounded-xl overflow-hidden shrink-0 relaitve">
                         ${imageElement}
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold leading-tight line-clamp-1 dark:text-white ${isOutOfStock ? 'line-through text-gray-500' : ''}">${item.name}</h3>
+                        <h3 class="font-bold leading-tight line-clamp-1 dark:text-white">${item.name}</h3>
                         <p class="text-sm text-gray-500">₱${item.price.toFixed(2)}</p>
                         ${errorBadge}
                     </div>
                     <div class="flex items-center gap-3">
                          <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-8 px-2 bg-gray-50 dark:bg-slate-800">
-                            <button class="w-6 text-gray-500 hover:text-primary ${isOutOfStock ? 'pointer-events-none opacity-50' : ''}" onclick="window.updateQty('${item.id}', ${item.quantity - 1})">-</button>
+                            <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity - 1})">-</button>
                             <span class="w-6 text-center text-sm font-bold dark:text-white">${item.quantity}</span>
-                            <button class="w-6 text-gray-500 hover:text-primary ${isOutOfStock ? 'pointer-events-none opacity-50' : ''}" onclick="window.updateQty('${item.id}', ${item.quantity + 1})">+</button>
+                            <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity + 1})">+</button>
                             <div class="h-4 w-px bg-gray-300 dark:bg-slate-600 mx-1"></div>
                             <button class="w-6 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors" onclick="window.removeItem('${item.id}')">
                                 <span class="material-symbols-outlined text-[18px] text-red-500">delete</span>
@@ -90,7 +96,7 @@ async function renderCart() {
             if (proceedBtn) {
                 (proceedBtn as HTMLButtonElement).disabled = hasStockIssue;
                 if (hasStockIssue) {
-                    Toast.show('Some items are unavailable. Please remove or update quantity.', 'error');
+                    Toast.show('Some items have insufficient stock. Please update quantity.', 'error');
                 }
             }
 
@@ -138,7 +144,10 @@ if (proceedBtn) {
             for (const item of items) {
                 const freshP = freshProducts.find(p => p.id === item.id);
                 const currentStock = freshP ? freshP.inventory_count : 0;
-                if (item.quantity > currentStock) {
+
+                // Allow Pre-order (stock <= 0)
+                // Block if Low Stock (stock > 0 but < quantity)
+                if (currentStock > 0 && item.quantity > currentStock) {
                     hasIssue = true;
                     break;
                 }

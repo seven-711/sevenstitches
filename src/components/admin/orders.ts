@@ -279,7 +279,14 @@ export async function renderOrders(container: HTMLElement) {
                                         <div class="h-8 w-8 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100">
                                             <img src="${item.products?.images?.[0] || 'https://via.placeholder.com/150'}" alt="${item.products?.name}" class="h-full w-full object-cover object-center">
                                         </div>
-                                        <span class="line-clamp-1">${item.products?.name}</span>
+                                        <div>
+                                            <span class="line-clamp-1">${item.products?.name}</span>
+                                            ${item.is_preorder ? `
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 mt-0.5">
+                                                <span class="material-icons-round text-[10px]">local_shipping</span> PRE-ORDER
+                                            </span>
+                                            ` : ''}
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-right">₱${item.unit_price}</td>
                                     <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-right">${item.quantity}</td>
