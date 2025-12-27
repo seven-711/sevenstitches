@@ -35,6 +35,8 @@ export class AppHeader extends HTMLElement {
                 </div>
               </div>
 
+              <a class="text-sm font-medium hover:text-primary transition-colors" href="/pages/orders.html">Orders</a>
+
               <a class="text-sm font-medium hover:text-primary transition-colors" href="/pages/about.html">About</a>
             </nav>
           </div>
@@ -96,6 +98,9 @@ export class AppHeader extends HTMLElement {
                     <!-- Populated dynamically -->
                 </div>
             </div>
+            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/orders.html">
+                <span class="material-symbols-outlined">receipt_long</span> Orders
+            </a>
             <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/about.html">
                 <span class="material-symbols-outlined">info</span> About
             </a>

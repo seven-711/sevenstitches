@@ -23,6 +23,7 @@ export default defineConfig({
                 privacy: 'pages/privacy.html',
                 help: 'pages/help.html',
                 contact: 'pages/contact.html',
+                orders: 'pages/orders.html',
             },
         },
     },

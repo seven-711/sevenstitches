@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>My Orders - Seven Stitches</title>
+    <link rel="icon" type="image/png" href="/favicon-circle.png" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark text-[#0f172a] dark:text-[#e2e8f0]">
+    <app-header></app-header>
+
+    <main class="w-full min-h-screen pb-20">
+        <div class="px-4 md:px-10 py-10 max-w-[1200px] mx-auto">
+
+            <header class="mb-10">
+                <h1 class="text-3xl md:text-4xl font-black mb-2">My Orders</h1>
+                <p class="text-gray-500 dark:text-gray-400">Track and manage your recent purchases.</p>
+            </header>
+
+            <!-- Tabs/Categories -->
+            <div class="flex gap-6 border-b border-gray-200 dark:border-gray-800 mb-8 overflow-x-auto">
+                <button id="tab-progress"
+                    class="pb-4 px-2 text-primary font-bold border-b-2 border-primary transition-colors whitespace-nowrap">
+                    In Progress
+                </button>
+                <button id="tab-delivered"
+                    class="pb-4 px-2 text-gray-500 dark:text-gray-400 font-medium hover:text-gray-800 dark:hover:text-gray-200 transition-colors whitespace-nowrap">
+                    Delivered / Completed
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div id="orders-container" class="space-y-6">
+                <!-- Orders injected via JS -->
+                <div class="animate-pulse space-y-4">
+                    <div class="h-40 bg-white dark:bg-[#151c2b] rounded-2xl"></div>
+                    <div class="h-40 bg-white dark:bg-[#151c2b] rounded-2xl"></div>
+                </div>
+            </div>
+
+            <!-- Empty State Template (Hidden) -->
+            <template id="empty-state-template">
+                <div class="text-center py-20">
+                    <div
+                        class="size-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                        <span class="material-symbols-outlined text-4xl">shopping_bag</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">No orders found</h3>
+                    <p class="text-gray-500 mb-6">You haven't placed any orders in this category yet.</p>
+                    <a href="/pages/shop.html"
+                        class="inline-flex items-center justify-center h-10 px-6 rounded-full bg-primary text-white font-bold hover:bg-primary/90 transition-colors">
+                        Start Shopping
+                    </a>
+                </div>
+            </template>
+
+        </div>
+    </main>
+
+    <script type="module" src="/src/pages/orders.ts"></script>
+</body>
+
+</html>

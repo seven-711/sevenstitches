@@ -8,6 +8,7 @@ export interface Order {
     created_at: string;
     shipping_address?: string;
     phone?: string;
+    tracking_number?: string;
     items?: OrderItem[];
 }
 
@@ -49,6 +50,34 @@ export class OrderService {
 
         return data as Order[];
     }
+
+    static async getOrdersByCustomer(email: string) {
+        const { data, error } = await supabase
+            .from('orders')
+            .select(`
+                *,
+                items:order_items (
+                    quantity,
+                    unit_price,
+                    is_preorder,
+                    products (
+                        id,
+                        name,
+                        images
+                    )
+                )
+            `)
+            .eq('customer_email', email)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching customer orders:', error);
+            throw error;
+        }
+
+        return data as Order[];
+    }
+
 
     static async updateOrderStatus(orderId: string, status: string) {
         const { data, error } = await supabase
