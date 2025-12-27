@@ -17,6 +17,7 @@ export interface OrderItem {
     quantity: number;
     unit_price: number;
     is_preorder?: boolean;
+    customization_message?: string;
     products: {
         name: string;
         images: string[];
@@ -35,6 +36,7 @@ export class OrderService {
                     quantity,
                     unit_price,
                     is_preorder,
+                    customization_message,
                     products (
                         name,
                         images
@@ -60,6 +62,7 @@ export class OrderService {
                     quantity,
                     unit_price,
                     is_preorder,
+                    customization_message,
                     products (
                         id,
                         name,
@@ -120,6 +123,7 @@ export class OrderService {
                     quantity,
                     unit_price,
                     is_preorder,
+                    customization_message,
                     products (
                         name,
                         images
@@ -149,6 +153,7 @@ export class OrderService {
                     quantity,
                     unit_price,
                     is_preorder,
+                    customization_message,
                     products (
                         name,
                         images

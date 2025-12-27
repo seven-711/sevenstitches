@@ -2,6 +2,7 @@ import { Product } from '../services/product.service';
 
 export interface CartItem extends Product {
     quantity: number;
+    customizationMessage?: string;
 }
 
 const CART_STORAGE_KEY = 'sevenstitches_cart';
@@ -59,6 +60,15 @@ export class CartState {
             } else {
                 this.save();
             }
+        }
+    }
+
+    static updateCustomization(productId: string, message: string) {
+        if (this.items.length === 0) this.load();
+        const item = this.items.find(i => i.id === productId);
+        if (item) {
+            item.customizationMessage = message;
+            this.save();
         }
     }
 

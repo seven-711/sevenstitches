@@ -1,12 +1,13 @@
 import '../style.css';
 import { AuthService } from '../services/auth.service';
-import { clerk } from '../lib/clerk';
+
 import { CheckoutService, OrderDetails } from '../services/checkout.service';
 import { CartService } from '../services/cart.service';
 import { Toast } from '../components/toast';
 import { z } from 'zod';
-// Remove phLocations import
-// import { phLocations } from '../data/ph-locations'; 
+import { ProductService } from '../services/product.service';
+import { CartItem } from '../state/cart';
+
 
 const itemsContainer = document.getElementById('order-summary-items');
 const subtotalEl = document.getElementById('summary-subtotal');
@@ -14,7 +15,6 @@ const taxEl = document.getElementById('summary-tax');
 const totalEl = document.getElementById('summary-total');
 const placeOrderBtn = document.getElementById('place-order-btn');
 
-// --- Zod Schema Validation ---
 // --- Zod Schema Validation ---
 const checkoutSchema = z.object({
     fullName: z.string().min(2, "Full Name must be at least 2 characters"),
@@ -27,16 +27,69 @@ const checkoutSchema = z.object({
 });
 
 let appliedCoupon: { code: string; percent: number } | null = null;
+const urlParams = new URLSearchParams(window.location.search);
+const isDirect = urlParams.get('direct') === 'true';
 
+// Helper to get items (either from Cart or Direct URL params)
+async function getItemsForCheckout(): Promise<CartItem[]> {
+    if (isDirect) {
+        const productId = urlParams.get('productId');
+        const quantity = parseInt(urlParams.get('quantity') || '1');
+        if (productId) {
+            const product = await ProductService.getProductById(productId);
+            if (product) {
+                return [{ ...product, quantity }];
+            }
+        }
+        return [];
+    }
+    return CartService.getItems();
+}
 
-// ... Rest of the existing logic (Render Summary, Coupon, etc.) ...
-import { ProductService } from '../services/product.service';
+// --- Auth Selection UI Logic ---
+const authSelectionContainer = document.getElementById('auth-selection-container');
+const checkoutFormContainer = document.getElementById('checkout-form-container');
+const guestCheckoutBtn = document.getElementById('guest-checkout-btn');
+const loginBtn = document.getElementById('login-btn');
+const signupBtn = document.getElementById('signup-btn');
 
-// ... (Zod schema and other vars remain same)
+function showCheckoutForm() {
+    authSelectionContainer?.classList.add('hidden');
+    checkoutFormContainer?.classList.remove('hidden');
+    checkoutFormContainer?.classList.add('flex');
+}
+
+if (guestCheckoutBtn) {
+    guestCheckoutBtn.addEventListener('click', () => {
+        showCheckoutForm();
+    });
+}
+
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        const params = new URLSearchParams(window.location.search);
+        params.set('redirect_url', window.location.href);
+        window.location.href = `/pages/login.html?${params.toString()}`;
+    });
+}
+
+if (signupBtn) {
+    signupBtn.addEventListener('click', () => {
+        const params = new URLSearchParams(window.location.search);
+        params.set('redirect_url', window.location.href);
+        window.location.href = `/pages/login.html?mode=signup&${params.toString()}`;
+    });
+}
+
 
 async function renderOrderSummary() {
-    const items = CartService.getItems();
-    const subtotal = CartService.getTotal();
+    // Show spinner or loading state
+    if (itemsContainer) itemsContainer.innerHTML = '<p class="text-center text-gray-500">Loading items...</p>';
+
+    const items = await getItemsForCheckout();
+
+    // Calculate totals locally based on fetched items
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     let tax = 0;
     let total = subtotal + tax;
 
@@ -47,11 +100,11 @@ async function renderOrderSummary() {
                 (placeOrderBtn as HTMLButtonElement).disabled = true; // Disable if empty
             }
         } else {
-            // Show loading state or existing items with validation pending
+            // Check stock status
             if (placeOrderBtn) (placeOrderBtn as HTMLButtonElement).disabled = true; // Validate first
 
             try {
-                // Fetch fresh data
+                // Fetch fresh product data for stock validation
                 const freshProducts = await ProductService.getProductsByIds(items.map(i => i.id));
                 let hasStockIssue = false;
 
@@ -98,202 +151,86 @@ async function renderOrderSummary() {
                             <p class="font-bold dark:text-white">₱${(item.price * item.quantity).toFixed(2)}</p>
                         </div>
                     </div>
-                `}).join('');
+                    `;
+                }).join('');
 
+                if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+                if (taxEl) taxEl.textContent = `₱${tax.toFixed(2)}`;
+                if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
+
+                // Re-enable button if no stock issues
                 if (placeOrderBtn) {
                     (placeOrderBtn as HTMLButtonElement).disabled = hasStockIssue;
                     if (hasStockIssue) {
-                        Toast.show('Some items are unavailable. Please update your cart.', 'error');
+                        Toast.show("Some items have insufficient stock. Please update quantity.", "error");
                     }
                 }
 
-            } catch (e) {
-                console.error("Stock validation failed", e);
-                // Fallback: Enable but maybe warn? Or keep disabled? 
-                // Creating a simplified view if validation fails (e.g. offline)
-                // For safety, we might keep it enabled but relying on backend check.
-                // But user requested specific UX. Let's assume network is fine.
-                if (placeOrderBtn) (placeOrderBtn as HTMLButtonElement).disabled = false;
+                // Coupon Re-calc if applied
+                if (appliedCoupon && totalEl) {
+                    const discountAmount = subtotal * (appliedCoupon.percent / 100);
+                    const discountedTotal = total - discountAmount;
+
+                    // Update UI to show discount
+                    const discountEl = document.getElementById('summary-discount');
+                    if (discountEl) {
+                        discountEl.parentElement!.classList.remove('hidden');
+                        discountEl.textContent = `-₱${discountAmount.toFixed(2)} (${appliedCoupon.percent}% OFF)`;
+                    }
+                    totalEl.textContent = `₱${discountedTotal.toFixed(2)}`;
+                }
+
+            } catch (error) {
+                console.error('Error rendering order summary:', error);
+                if (itemsContainer) itemsContainer.innerHTML = '<p class="text-center text-red-500">Failed to load items.</p>';
             }
         }
     }
+}
 
-    if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
+// Coupon Logic
+const couponForm = document.getElementById('coupon-form') as HTMLFormElement;
+const couponInput = document.getElementById('coupon-code') as HTMLInputElement;
 
-    // Discount Logic
-    let discountAmount = 0;
-    if (appliedCoupon) {
-        discountAmount = subtotal * (appliedCoupon.percent / 100);
-    }
+if (couponForm) {
+    couponForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = couponInput.value.trim().toUpperCase();
 
-    // Render Discount UI if not present
-    const summaryContainer = document.querySelector('#order-summary-container .space-y-4') || document.querySelector('.bg-surface-light .space-y-4');
-    let discountRow = document.getElementById('summary-discount-row');
-    if (!discountRow && summaryContainer) {
-        // Insert before tax
-        const taxRow = document.getElementById('summary-tax')?.parentElement;
-        if (taxRow) {
-            discountRow = document.createElement('div');
-            discountRow.id = 'summary-discount-row';
-            discountRow.className = 'flex justify-between text-text-muted hidden';
-            discountRow.innerHTML = `<span>Discount</span><span class="font-medium text-green-600" id="summary-discount">-₱0.00</span>`;
-            taxRow.parentElement?.insertBefore(discountRow, taxRow);
-        }
-    }
-
-    if (discountRow) {
-        if (appliedCoupon) {
-            discountRow.classList.remove('hidden');
-            const discEl = discountRow.querySelector('#summary-discount');
-            if (discEl) discEl.textContent = `-₱${discountAmount.toFixed(2)} (${appliedCoupon.percent}%)`;
+        // Mock Coupon Validation (Replace with DB check in real app)
+        if (code === 'SAVE10') {
+            appliedCoupon = { code: 'SAVE10', percent: 10 };
+            Toast.show('Coupon applied: 10% OFF', 'success');
+            renderOrderSummary(); // Re-render to update totals
+        } else if (code === 'WELCOME20') {
+            appliedCoupon = { code: 'WELCOME20', percent: 20 };
+            Toast.show('Coupon applied: 20% OFF', 'success');
+            renderOrderSummary();
         } else {
-            discountRow.classList.add('hidden');
+            Toast.show('Invalid coupon code', 'error');
+            appliedCoupon = null;
+            renderOrderSummary(); // Reset
         }
-    }
-
-    tax = 0; // Tax set to 0 as requested
-    total = (subtotal - discountAmount) + tax;
-
-    if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
-    if (taxEl) taxEl.textContent = `₱${tax.toFixed(2)}`;
-}
-
-function setupCouponListeners() {
-    let couponContainer = document.getElementById('coupon-input-container');
-
-    if (!couponContainer && itemsContainer) {
-        couponContainer = document.createElement('div');
-        couponContainer.id = 'coupon-input-container';
-        couponContainer.className = 'mt-6 pt-6 border-t border-border';
-        couponContainer.innerHTML = `
-            <div class="relative">
-                <input type="text" id="coupon-code-input" placeholder="Promo Code" class="w-full pl-5 pr-24 h-12 bg-white dark:bg-slate-800 border border-border rounded-full text-sm focus:outline-none focus:border-primary uppercase" />
-                <button type="button" id="apply-coupon-btn" class="absolute right-1 top-1 bottom-1 px-5 rounded-full bg-surface-dark dark:bg-white text-white dark:text-text-main text-sm font-bold hover:opacity-90 transition-opacity">Apply</button>
-            </div>
-            <p id="coupon-message" class="text-xs mt-1 min-h-[1.25em]"></p>
-        `;
-        itemsContainer.parentElement?.appendChild(couponContainer);
-    }
-
-    const applyBtn = document.getElementById('apply-coupon-btn');
-    const input = document.getElementById('coupon-code-input') as HTMLInputElement;
-    const msg = document.getElementById('coupon-message');
-
-    if (applyBtn && input) {
-        applyBtn.addEventListener('click', async () => {
-            const code = input.value.trim().toUpperCase();
-            if (!code) return;
-
-            applyBtn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>';
-            (applyBtn as HTMLButtonElement).disabled = true;
-
-            try {
-                const res = await fetch('/api/validate-coupon', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code })
-                });
-                const data = await res.json();
-
-                if (data.valid) {
-                    appliedCoupon = { code: data.code, percent: data.discountPercent };
-                    Toast.show('Coupon applied!', 'success');
-                    if (msg) {
-                        msg.textContent = `Coupon ${data.code} applied.`;
-                        msg.className = 'text-xs mt-1 text-green-600';
-                    }
-                    renderOrderSummary();
-                } else {
-                    appliedCoupon = null;
-                    Toast.show(data.message || 'Invalid coupon', 'error');
-                    if (msg) {
-                        msg.textContent = data.message;
-                        msg.className = 'text-xs mt-1 text-red-500';
-                    }
-                    renderOrderSummary();
-                }
-            } catch (e) {
-                console.error(e);
-                Toast.show('Failed to validate coupon', 'error');
-            } finally {
-                applyBtn.innerHTML = 'Apply';
-                (applyBtn as HTMLButtonElement).disabled = false;
-            }
-        });
-    }
-}
-
-renderOrderSummary();
-setupCouponListeners();
-
-const authSelectionContainer = document.getElementById('auth-selection-container');
-const checkoutFormContainer = document.getElementById('checkout-form-container');
-const guestCheckoutBtn = document.getElementById('guest-checkout-btn');
-const loginBtn = document.getElementById('login-btn');
-const signupBtn = document.getElementById('signup-btn');
-
-function showCheckoutForm() {
-    if (authSelectionContainer) authSelectionContainer.classList.add('hidden');
-    if (checkoutFormContainer) checkoutFormContainer.classList.remove('hidden');
-}
-
-async function init() {
-    const user = await AuthService.getUser();
-    if (user) {
-        showCheckoutForm();
-        const emailInput = document.getElementById('email') as HTMLInputElement;
-        if (emailInput) {
-            const email = user.primaryEmailAddress?.emailAddress || (user as any).email;
-            if (email) {
-                emailInput.value = email;
-                // Only disable if NOT a guest
-                const isGuest = user.id && user.id.startsWith('guest-');
-                if (!isGuest) {
-                    emailInput.readOnly = true;
-                    emailInput.classList.add('opacity-75', 'cursor-not-allowed');
-                }
-            }
-        }
-    }
-}
-
-if (guestCheckoutBtn) {
-    guestCheckoutBtn.addEventListener('click', async () => {
-        await AuthService.loginAsGuest('guest@example.com');
-        showCheckoutForm();
     });
 }
 
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        clerk.openSignIn();
-    });
-}
-
-if (signupBtn) {
-    signupBtn.addEventListener('click', () => {
-        clerk.openSignUp();
-    });
-}
-
-
-init();
-
-const paymentOnlineBtn = document.getElementById('payment-online') as HTMLInputElement;
-const paymentCodBtn = document.getElementById('payment-cod') as HTMLInputElement;
-const cardDetailsSection = document.getElementById('card-details-section');
-
+// Payment Method Toggle UI
 function toggleCardDetails() {
-    if (cardDetailsSection) {
-        if (paymentOnlineBtn?.checked) {
-            cardDetailsSection.classList.remove('max-h-0', 'opacity-0', 'p-0', 'mt-0', 'border-none', 'overflow-hidden');
-            cardDetailsSection.classList.add('max-h-[500px]', 'opacity-100', 'p-6', 'mt-6', 'border');
-        } else {
-            cardDetailsSection.classList.remove('max-h-[500px]', 'opacity-100', 'p-6', 'mt-6', 'border');
-            cardDetailsSection.classList.add('max-h-0', 'opacity-0', 'p-0', 'mt-0', 'border-none', 'overflow-hidden');
-        }
+    const onlineSection = document.getElementById('payment-online-section');
+    const codSection = document.getElementById('payment-cod-section');
+    const isOnline = (document.getElementById('payment-online') as HTMLInputElement).checked;
+
+    if (isOnline) {
+        onlineSection?.classList.remove('hidden');
+        codSection?.classList.add('hidden');
+    } else {
+        onlineSection?.classList.add('hidden');
+        codSection?.classList.remove('hidden');
     }
 }
+
+const paymentOnlineBtn = document.getElementById('payment-online');
+const paymentCodBtn = document.getElementById('payment-cod');
 
 if (paymentOnlineBtn && paymentCodBtn) {
     paymentOnlineBtn.addEventListener('change', toggleCardDetails);
@@ -303,12 +240,12 @@ if (paymentOnlineBtn && paymentCodBtn) {
 
 if (placeOrderBtn) {
     placeOrderBtn.addEventListener('click', async () => {
-        // Empty Cart Validation
-        // Empty Cart Validation
-        const items = CartService.getItems();
-        console.log('Cart Items on Checkout:', items);
+        // Validation
+        const items = await getItemsForCheckout();
+
+        console.log('Items for Checkout:', items);
         if (items.length === 0) {
-            Toast.show("Your cart is empty. Please add items before placing an order.", "error");
+            Toast.show("No items to checkout.", "error");
             return;
         }
 
@@ -338,10 +275,9 @@ if (placeOrderBtn) {
         const formattedAddress = `MEET-UP: ${formData.meetupLocation} | DATE: ${formData.meetupDate} | TIME: ${formData.meetupTime} | CDO`;
 
         // Stock Validation (Fresh Check)
-        const cartItems = CartService.getItems();
         try {
-            const freshProducts = await ProductService.getProductsByIds(cartItems.map(i => i.id));
-            for (const item of cartItems) {
+            const freshProducts = await ProductService.getProductsByIds(items.map(i => i.id));
+            for (const item of items) {
                 const freshP = freshProducts.find(p => p.id === item.id);
                 const currentStock = freshP ? freshP.inventory_count : 0;
 
@@ -366,14 +302,23 @@ if (placeOrderBtn) {
             paymentMethod: formData.paymentMethod as 'online' | 'cod'
         };
 
-        // ... (Existing CheckoutService.placeOrder logic remains same) ...
+        // UI Loading
         placeOrderBtn.innerHTML = `
             <span class="animate-spin material-symbols-outlined text-base">progress_activity</span>
             <span>Processing...</span>
         `;
         (placeOrderBtn as HTMLButtonElement).disabled = true;
 
-        const placeOrdRes = await CheckoutService.placeOrder(orderDetails as OrderDetails);
+        // Pass 'items' explicitly if Direct Checkout. If not direct (items come not from CartService logic here but getItemsForCheckout()), 
+        // effectively we want to tell CheckoutService which items to use.
+        // If isDirect is true, passing 'items' will prevent Cart clearing.
+        // If isDirect is false, passing 'items' would essentially act same but we want Cart clearing.
+        // CheckoutService logic:  "If directItems provided, use them and DON'T clear cart. Else use CartState and clear."
+
+        // So:
+        const directItems = isDirect ? items : undefined;
+
+        const placeOrdRes = await CheckoutService.placeOrder(orderDetails as OrderDetails, directItems);
 
         if (!placeOrdRes.success) {
             Toast.show(placeOrdRes.error || 'Failed to place order', 'error');
@@ -425,3 +370,19 @@ if (placeOrderBtn) {
         }
     });
 }
+
+// Auth Pre-fill
+// Auth Pre-fill & Auto-Show Form
+AuthService.getUser().then(user => {
+    if (user && user.primaryEmailAddress) {
+        showCheckoutForm(); // User is logged in, show form immediately
+
+        const emailInput = document.getElementById('email') as HTMLInputElement;
+        const nameInput = document.getElementById('fullName') as HTMLInputElement;
+
+        if (emailInput && !emailInput.value) emailInput.value = user.primaryEmailAddress.emailAddress;
+        if (nameInput && !nameInput.value) nameInput.value = user.fullName || '';
+    }
+});
+
+renderOrderSummary();

@@ -281,10 +281,26 @@ export async function renderOrders(container: HTMLElement) {
                                         </div>
                                         <div>
                                             <span class="line-clamp-1">${item.products?.name}</span>
-                                            ${item.is_preorder ? `
-                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 mt-0.5">
-                                                <span class="material-icons-round text-[10px]">local_shipping</span> PRE-ORDER
-                                            </span>
+                                            <div class="flex flex-wrap gap-1 mt-1">
+                                                ${item.is_preorder ? `
+                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300">
+                                                    <span class="material-icons-round text-[10px]">local_shipping</span> PRE-ORDER
+                                                </span>
+                                                ` : ''}
+                                                ${item.customization_message ? `
+                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                                                    <span class="material-icons-round text-[10px]">edit</span> CUSTOM
+                                                </span>
+                                                `: ''}
+                                            </div>
+                                            ${item.customization_message ? `
+                                            <div class="mt-2 text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 p-2 rounded border border-amber-100 dark:border-amber-800/50 flex items-start gap-1.5">
+                                                <span class="material-icons-round text-[14px] mt-0.5 flex-shrink-0">edit_note</span>
+                                                <div>
+                                                    <span class="font-bold block text-[10px] uppercase tracking-wide opacity-75">Customization Request</span>
+                                                    <span class="italic">"${item.customization_message}"</span>
+                                                </div>
+                                            </div>
                                             ` : ''}
                                         </div>
                                     </td>

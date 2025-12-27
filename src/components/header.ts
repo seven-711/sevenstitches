@@ -114,11 +114,30 @@ export class AppHeader extends HTMLElement {
     this.setupMobileMenu();
     this.loadCategories();
     this.setupSearchListener();
+    this.injectChatWidget();
 
     // Load products for search
     ProductService.getProducts().then(products => {
       this.products = products;
     }).catch(err => console.error('Failed to load products for search', err));
+  }
+
+  injectChatWidget() {
+    if (!customElements.get('chat-widget')) {
+      import('./chat-widget').then(({ ChatWidget }) => {
+        customElements.define('chat-widget', ChatWidget);
+        this.appendWidget();
+      });
+    } else {
+      this.appendWidget();
+    }
+  }
+
+  appendWidget() {
+    if (!document.body.querySelector('chat-widget')) {
+      const widget = document.createElement('chat-widget');
+      document.body.appendChild(widget);
+    }
   }
 
   setupSearchListener() {

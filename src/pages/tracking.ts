@@ -220,8 +220,8 @@ function renderOrder(order: Order) {
     resultContainer.innerHTML = `
         <div class="space-y-8 animate-fade-in">
             <!-- Order Status Card -->
-            <div class="overflow-hidden rounded-3xl bg-white dark:bg-[#151c2b] shadow-xl border border-gray-100 dark:border-gray-800">
-                <div class="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#1a2333]/50 px-6 py-6 sm:px-10 flex flex-wrap justify-between items-center gap-4">
+            <div class="rounded-3xl bg-white dark:bg-[#151c2b] shadow-xl border border-gray-100 dark:border-gray-800">
+                <div class="rounded-t-3xl border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#1a2333]/50 px-6 py-6 sm:px-10 flex flex-wrap justify-between items-center gap-4">
                     <div>
                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Order ID</p>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white">#${order.id.slice(0, 8)}</h3>
@@ -232,7 +232,7 @@ function renderOrder(order: Order) {
                     </div>
                 </div>
 
-                <div class="px-6 py-12 sm:px-10">
+                <div class="px-8 pt-12 pb-24 sm:px-12">
                     <div class="relative">
                         <div class="absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
                         <div class="absolute left-0 top-1/2 h-1 -translate-y-1/2 bg-primary rounded-full transition-all duration-1000 ease-out" style="width: ${(currentStepIndex / (steps.length - 1)) * 100}%"></div>
@@ -241,6 +241,12 @@ function renderOrder(order: Order) {
                             ${steps.map((step, index) => {
         const isCompleted = index <= currentStepIndex;
         const isCurrent = index === currentStepIndex;
+
+        // Dynamic Alignment to prevent clipping
+        let alignClass = 'left-1/2 -translate-x-1/2 text-center';
+        if (index === 0) alignClass = 'left-1/2 -translate-x-[25%] text-center'; // Bias left
+        if (index === steps.length - 1) alignClass = 'left-1/2 -translate-x-[75%] text-center'; // Bias right
+
         return `
                                 <div class="flex flex-col items-center gap-3 relative group">
                                     <div class="flex size-10 md:size-12 items-center justify-center rounded-full transition-all duration-500 z-10 
@@ -250,7 +256,7 @@ function renderOrder(order: Order) {
                                         ${isCurrent ? `<span class="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-white dark:bg-[#151c2b]"><span class="size-2.5 rounded-full bg-green-500 animate-pulse"></span></span>` : ''}
                                         <span class="material-symbols-outlined text-lg md:text-xl">${step.icon}</span>
                                     </div>
-                                    <div class="text-center absolute top-14 w-32 ${isCurrent ? 'block' : 'hidden md:block'}">
+                                    <div class="absolute top-14 w-32 ${alignClass} ${isCurrent ? 'block' : 'hidden md:block'}">
                                         <p class="text-sm font-bold ${isCompleted ? 'text-gray-900 dark:text-white' : 'text-gray-400'}">${step.label}</p>
                                         ${isCompleted ? '<p class="text-xs text-gray-500 dark:text-gray-400">Completed</p>' : ''}
                                     </div>
@@ -261,7 +267,7 @@ function renderOrder(order: Order) {
                 </div>
 
                 ${currentStepIndex === 3 ? `
-                <div class="bg-blue-50 dark:bg-blue-900/10 border-t border-blue-100 dark:border-blue-900/20 px-6 py-4 sm:px-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
+                <div class="rounded-b-3xl bg-blue-50 dark:bg-blue-900/10 border-t border-blue-100 dark:border-blue-900/20 px-6 py-4 sm:px-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
                     <div class="rounded-full bg-blue-100 dark:bg-blue-900/30 p-2 text-primary">
                         <span class="material-symbols-outlined">local_shipping</span>
                     </div>
@@ -273,7 +279,7 @@ function renderOrder(order: Order) {
                 ` : ''}
 
                 ${currentStepIndex === 4 ? `
-                <div class="bg-green-50 dark:bg-green-900/10 border-t border-green-100 dark:border-green-900/20 px-6 py-4 sm:px-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
+                <div class="rounded-b-3xl bg-green-50 dark:bg-green-900/10 border-t border-green-100 dark:border-green-900/20 px-6 py-4 sm:px-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 animate-slide-up">
                     <div class="rounded-full bg-green-100 dark:bg-green-900/30 p-2 text-green-600">
                         <span class="material-symbols-outlined">check_circle</span>
                     </div>
@@ -338,16 +344,30 @@ function renderOrder(order: Order) {
                     </div>
 
                     <div class="rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 p-6 text-center">
-                        <div class="mx-auto size-12 rounded-full bg-white dark:bg-[#151c2b] text-primary flex items-center justify-center shadow-sm mb-3">
-                            <span class="material-symbols-outlined">support_agent</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Need Help?</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                            Having issues with your delivery? Our support team is here for you.
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Follow Me</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                            Stay connected with me on social media for updates and new collections!
                         </p>
-                        <button class="w-full rounded-lg bg-white dark:bg-[#151c2b] border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-sm font-bold text-gray-900 dark:text-white shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            Contact Support
-                        </button>
+                        <div class="flex justify-center gap-4">
+                            <a href="https://www.instagram.com/underthe_sky7/" target="_blank" class="p-3 bg-white dark:bg-[#151c2b] text-pink-600 rounded-full shadow-sm hover:scale-110 hover:shadow-md transition-all">
+                                <span class="sr-only">Instagram</span>
+                                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.673 2.013 10.03 2 12.488 2h-.173zm-3.715 14a2.715 2.715 0 110-5.43 2.715 2.715 0 010 5.43zm9.932-8.32a1.065 1.065 0 11-2.13 0 1.065 1.065 0 012.13 0z" fill-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                            <a href="https://www.facebook.com/yhoung11" target="_blank" class="p-3 bg-white dark:bg-[#151c2b] text-blue-600 rounded-full shadow-sm hover:scale-110 hover:shadow-md transition-all">
+                                <span class="sr-only">Facebook</span>
+                                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                            <a href="https://www.tiktok.com/@julyfranzclaridad?_r=1&_t=ZS-92W1XCMx2kX" target="_blank" class="p-3 bg-white dark:bg-[#151c2b] text-black dark:text-white rounded-full shadow-sm hover:scale-110 hover:shadow-md transition-all">
+                                <span class="sr-only">TikTok</span>
+                                <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
+                                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

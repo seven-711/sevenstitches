@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { CartState } from '../state/cart';
+import { CartState, CartItem } from '../state/cart';
 import { CartService } from './cart.service';
 import { ProductService } from './product.service';
 import { OrderService } from './order.service';
@@ -25,15 +25,15 @@ export class CheckoutService {
         return { valid: true };
     }
 
-    static async placeOrder(details: OrderDetails): Promise<{ success: boolean; orderId?: string; trackingNumber?: string; error?: string }> {
+    static async placeOrder(details: OrderDetails, directItems?: CartItem[]): Promise<{ success: boolean; orderId?: string; trackingNumber?: string; error?: string }> {
         console.log('Processing order for:', details);
 
-        const items = CartState.getItems();
+        const items = directItems || CartState.getItems();
         if (items.length === 0) {
             return { success: false, error: 'Cart is empty' };
         }
 
-        const totalAmount = CartState.getTotal();
+        const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
         try {
             // 1.5 Fetch fresh product data for accurate Pre-order status
@@ -66,7 +66,8 @@ export class CheckoutService {
                     product_id: item.id,
                     quantity: item.quantity,
                     unit_price: item.price,
-                    is_preorder: isPreOrder
+                    is_preorder: isPreOrder,
+                    customization_message: item.customizationMessage
                 };
             });
 
@@ -91,8 +92,10 @@ export class CheckoutService {
                 // In a real system, we might want to alert admin.
             }
 
-            // 4. Clear Cart
-            CartService.clear();
+            // 4. Clear Cart (ONLY IF NOT DIRECT CHECKOUT)
+            if (!directItems) {
+                CartService.clear();
+            }
 
             return { success: true, orderId: order.id, trackingNumber: order.tracking_number };
 

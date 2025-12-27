@@ -252,8 +252,8 @@ const productId = urlParams.get('id');
 
                 buyNowBtn?.addEventListener('click', () => {
                     const qty = parseInt(quantityInput.value) || 1;
-                    CartState.addItem(product, qty);
-                    window.location.href = '/pages/checkout.html';
+                    // Direct Checkout: Don't add to cart state, just redirect with params
+                    window.location.href = `/pages/checkout.html?direct=true&productId=${product.id}&quantity=${qty}`;
                 });
 
 

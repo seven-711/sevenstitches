@@ -1,9 +1,10 @@
 import { AuthService } from '../services/auth.service';
-import { renderDashboard } from '../components/admin/dashboard.ts';
-import { renderProducts } from '../components/admin/products.ts';
-import { renderCategories } from '../components/admin/categories.ts';
-import { renderBlog } from '../components/admin/blog.ts';
-import { renderOrders } from '../components/admin/orders.ts';
+import { renderDashboard } from '../components/admin/dashboard';
+import { renderProducts } from '../components/admin/products';
+import { renderCategories } from '../components/admin/categories';
+import { renderBlog } from '../components/admin/blog';
+import { renderOrders } from '../components/admin/orders';
+import { renderChat } from '../components/admin/chat';
 
 const contentMap: { [key: string]: (container: HTMLElement) => void } = {
     'dashboard': renderDashboard,
@@ -11,6 +12,7 @@ const contentMap: { [key: string]: (container: HTMLElement) => void } = {
     'categories': renderCategories,
     'orders': renderOrders,
     'blog': renderBlog,
+    'messages': renderChat
 };
 
 async function initAdmin() {
