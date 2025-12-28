@@ -172,12 +172,28 @@
                 </h1>
             </div>
             <div class="flex items-center space-x-4">
-                <button
-                    class="relative p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                    <span class="material-icons-round">notifications</span>
-                    <span
-                        class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
-                </button>
+                <div class="relative">
+                    <button id="admin-notification-btn"
+                        class="relative p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <span class="material-icons-round">notifications</span>
+                        <span id="admin-notification-badge"
+                            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center px-0.5 z-50 hidden"></span>
+                    </button>
+                    <!-- Dropdown -->
+                    <div id="admin-notification-dropdown"
+                        class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hidden z-50">
+                        <div
+                            class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white">Notifications</h3>
+                            <button id="mark-all-read"
+                                class="text-xs text-primary hover:text-primary-dark font-medium">Mark all read</button>
+                        </div>
+                        <div id="notification-list" class="max-h-80 overflow-y-auto">
+                            <!-- Items will be injected here -->
+                            <div class="p-4 text-center text-gray-400 text-sm">Loading...</div>
+                        </div>
+                    </div>
+                </div>
                 <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-[2px]">
                     <div class="h-full w-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
                         <span class="text-xs font-bold text-primary">AD</span>

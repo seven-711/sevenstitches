@@ -70,44 +70,45 @@ async function renderCart() {
                 }
 
                 return `
-                <div class="flex gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border ${isLowStock ? 'border-orange-200 dark:border-orange-900/30' : (isPreOrder ? 'border-teal-200 dark:border-teal-900/30' : 'border-gray-100 dark:border-slate-800')} items-start">
-                    <div class="size-20 bg-gray-100 rounded-xl overflow-hidden shrink-0 relative">
-                        ${imageElement}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="font-bold leading-tight line-clamp-1 dark:text-white">${item.name}</h3>
-                                <p class="text-sm text-gray-500">₱${item.price.toFixed(2)}</p>
-                                ${errorBadge}
+                <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border ${isLowStock ? 'border-orange-200 dark:border-orange-900/30' : (isPreOrder ? 'border-teal-200 dark:border-teal-900/30' : 'border-gray-100 dark:border-slate-800')}">
+                    <div class="flex gap-4 items-start">
+                        <div class="size-20 bg-gray-100 rounded-xl overflow-hidden shrink-0 relative">
+                            ${imageElement}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold leading-tight line-clamp-1 dark:text-white">${item.name}</h3>
+                                    <p class="text-sm text-gray-500">₱${item.price.toFixed(2)}</p>
+                                    ${errorBadge}
+                                </div>
                             </div>
-                            <!-- Mobile Qty moved or keep desktop layout? Let's keep existing structure but improve for inputs -->
                         </div>
-
-                        <!-- Customization Section -->
-                         <div class="mt-3">
-                            <p class="text-[10px] text-primary font-bold flex items-center gap-1 mb-1 select-none">
-                                <span class="material-symbols-outlined text-[14px]">edit_note</span>
-                                CUSTOMIZATION AVAILABLE
-                            </p>
-                            <textarea 
-                                class="w-full text-sm bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-2.5 resize-none focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow placeholder:text-gray-400"
-                                rows="2"
-                                placeholder="Add your customization message here (optional)..."
-                                oninput="window.updateCustomization('${item.id}', this.value)"
-                            >${item.customizationMessage || ''}</textarea>
+                        
+                        <div class="flex flex-col items-end gap-2 ml-2">
+                            <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-8 px-2 bg-gray-50 dark:bg-slate-800">
+                                <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity - 1})">-</button>
+                                <span class="w-6 text-center text-sm font-bold dark:text-white">${item.quantity}</span>
+                                <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity + 1})">+</button>
+                            </div>
+                             <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all" onclick="window.removeItem('${item.id}')">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="flex flex-col items-end gap-2 ml-2">
-                        <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-8 px-2 bg-gray-50 dark:bg-slate-800">
-                            <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity - 1})">-</button>
-                            <span class="w-6 text-center text-sm font-bold dark:text-white">${item.quantity}</span>
-                            <button class="w-6 text-gray-500 hover:text-primary" onclick="window.updateQty('${item.id}', ${item.quantity + 1})">+</button>
-                        </div>
-                         <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all" onclick="window.removeItem('${item.id}')">
-                            <span class="material-symbols-outlined text-[18px]">delete</span>
-                        </button>
+
+                    <!-- Customization Section -->
+                     <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800">
+                        <p class="text-[10px] text-primary font-bold flex items-center gap-1 mb-1 select-none">
+                            <span class="material-symbols-outlined text-[14px]">edit_note</span>
+                            CUSTOMIZATION AVAILABLE
+                        </p>
+                        <textarea 
+                            class="w-full text-base md:text-sm bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-md p-2.5 resize-none focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-shadow placeholder:text-gray-400"
+                            rows="2"
+                            placeholder="Add your customization message here (optional)..."
+                            oninput="window.updateCustomization('${item.id}', this.value)"
+                        >${item.customizationMessage || ''}</textarea>
                     </div>
                 </div>
             `}).join('');

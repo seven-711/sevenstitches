@@ -141,6 +141,136 @@ async function initAdmin() {
             }
         });
     });
+
+    // --- Notification Logic ---
+    const notifBtn = document.getElementById('admin-notification-btn');
+    const notifBadge = document.getElementById('admin-notification-badge');
+    const notifDropdown = document.getElementById('admin-notification-dropdown');
+    const notifList = document.getElementById('notification-list');
+    const markAllBtn = document.getElementById('mark-all-read');
+
+    // Toggle Dropdown
+    notifBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown?.classList.toggle('hidden');
+        if (!notifDropdown?.classList.contains('hidden')) {
+            loadNotifications();
+        }
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+        if (!notifDropdown?.contains(e.target as Node) && !notifBtn?.contains(e.target as Node)) {
+            notifDropdown?.classList.add('hidden');
+        }
+    });
+
+    // Load initial badge
+    updateBadge();
+
+    async function updateBadge() {
+        const { NotificationService } = await import('../services/notification.service');
+        const count = await NotificationService.getUnreadCount();
+        if (notifBadge) {
+            if (count > 0) {
+                notifBadge.classList.remove('hidden');
+                notifBadge.textContent = count > 99 ? '99+' : count.toString();
+                console.log('Badge updated with count:', count);
+            } else {
+                notifBadge.classList.add('hidden');
+            }
+        }
+    }
+
+    async function loadNotifications() {
+        const { NotificationService } = await import('../services/notification.service');
+        const notifications = await NotificationService.getNotifications();
+
+        if (!notifList) return;
+
+        if (notifications.length === 0) {
+            notifList.innerHTML = `<div class="p-6 text-center text-gray-400 text-sm">No notifications</div>`;
+            return;
+        }
+
+        notifList.innerHTML = notifications.map(n => `
+            <div class="notification-item p-3 border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors ${n.read ? 'opacity-60' : 'bg-blue-50/10 dark:bg-blue-900/10'}" data-id="${n.id}" data-link="${n.link || ''}" data-conversation-id="${n.conversationId || ''}">
+                <div class="flex gap-3">
+                    <div class="mt-1">
+                        <span class="material-icons-round text-sm ${getIconColor(n.type)}">${getIcon(n.type)}</span>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 ${n.read ? '' : 'text-primary'}">${n.title}</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">${n.message}</p>
+                        <p class="text-[10px] text-gray-400 mt-1">${getTimeAgo(n.created_at)}</p>
+                    </div>
+                     ${!n.read ? `<div class="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></div>` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        // Add Listeners
+        notifList.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', async () => {
+                const id = item.getAttribute('data-id');
+                const link = item.getAttribute('data-link');
+                const conversationId = item.getAttribute('data-conversation-id');
+
+                if (id) {
+                    await NotificationService.markAsRead(id);
+                    updateBadge();
+                }
+
+                if (link && navItems) {
+                    // Navigate
+                    if (conversationId) {
+                        sessionStorage.setItem('open_chat_id', conversationId);
+                    }
+
+                    const targetNav = Array.from(navItems).find((n: Element) => n.getAttribute('data-view') === link);
+                    if (targetNav) {
+                        (targetNav as HTMLElement).click();
+                        notifDropdown?.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    }
+
+    markAllBtn?.addEventListener('click', async () => {
+        const { NotificationService } = await import('../services/notification.service');
+        await NotificationService.markAllAsRead();
+        updateBadge();
+        loadNotifications();
+    });
+
+    function getIcon(type: string) {
+        switch (type) {
+            case 'success': return 'check_circle';
+            case 'warning': return 'warning';
+            case 'error': return 'error';
+            default: return 'info';
+        }
+    }
+
+    function getIconColor(type: string) {
+        switch (type) {
+            case 'success': return 'text-green-500';
+            case 'warning': return 'text-orange-500';
+            case 'error': return 'text-red-500';
+            default: return 'text-blue-500';
+        }
+    }
+
+    function getTimeAgo(date: Date) {
+        const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+        if (seconds < 60) return 'Just now';
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m ago`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h ago`;
+        return date.toLocaleDateString();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initAdmin);

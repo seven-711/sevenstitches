@@ -98,7 +98,7 @@ export class ChatWidget extends HTMLElement {
                 // Automated Reply Logic
                 if (isFirstMessage) {
                     setTimeout(async () => {
-                        const autoReply = "Thank you for reaching out. This is <strong>July</strong>. \n\nI check my website regularly, approximately every 30 minutes. Please feel free to check back shortly, and I will make sure to respond within that timeframe.\n\nI appreciate your patience. <3";
+                        const autoReply = "Thank you for reaching out. This is July. \n\nI check my website regularly, approximately every 30 minutes. Please feel free to check back shortly, and I will make sure to respond within that timeframe.\n\nI appreciate your patience. <3";
                         try {
                             await ChatService.sendMessage(this.conversation!.id, autoReply, 'admin');
                         } catch (e) {
