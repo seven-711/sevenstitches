@@ -73,6 +73,14 @@ async function initAdmin() {
             return;
         }
 
+        // Show Profile Image
+        const profileContainer = document.getElementById('admin-profile-container');
+        if (profileContainer && clerk.user.imageUrl) {
+            profileContainer.innerHTML = `
+                <img src="${clerk.user.imageUrl}" alt="Profile" class="h-full w-full rounded-full object-cover">
+            `;
+        }
+
         // 2. Show UI
         if (loadingEl) loadingEl.style.display = 'none';
         if (sidebarEl) sidebarEl.classList.remove('hidden');

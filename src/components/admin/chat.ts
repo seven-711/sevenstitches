@@ -32,7 +32,7 @@ export async function renderChat(container: HTMLElement) {
                 <div id="admin-chat-input-area" class="p-4 bg-white dark:bg-[#151c2b] border-t border-gray-200 dark:border-gray-800 hidden">
                     <form id="admin-chat-form" class="flex gap-4">
                         <input type="text" id="admin-message-input" class="flex-1 bg-gray-100 dark:bg-gray-800 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary dark:text-white" placeholder="Type your reply..." autocomplete="off">
-                        <button type="submit" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-xl font-bold transition-colors">Send</button>
+                        <button type="submit" class="bg-primary hover:bg-primary-dark text-white p-3 rounded-xl font-bold transition-colors flex items-center justify-center"><span class="material-symbols-outlined">send</span></button>
                     </form>
                 </div>
             </div>
