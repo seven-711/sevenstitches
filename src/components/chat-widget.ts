@@ -24,7 +24,19 @@ export class ChatWidget extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div id="chat-widget-container" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-4 font-sans">
+            <div id="chat-widget-container" class="fixed bottom-20 sm:bottom-6 right-6 z-[9999] flex flex-col items-end gap-4 font-sans">
+                <style>
+                    @keyframes fadeLoop {
+                        0% { opacity: 0; transform: translateY(10px); visibility: hidden; }
+                        5% { opacity: 1; transform: translateY(0); visibility: visible; }
+                        50% { opacity: 1; transform: translateY(0); visibility: visible; }
+                        55% { opacity: 0; transform: translateY(10px); visibility: hidden; }
+                        100% { opacity: 0; transform: translateY(10px); visibility: hidden; }
+                    }
+                    .chat-prompt-anim {
+                        animation: fadeLoop 8s infinite;
+                    }
+                </style>
                 <!-- Chat Window -->
                 <div id="chat-window" class="hidden w-[calc(100vw-48px)] sm:w-[350px] h-[500px] max-h-[80vh] bg-white dark:bg-[#151c2b] rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden transition-all transform origin-bottom-right scale-95 opacity-0">
                     <!-- Header -->
@@ -58,6 +70,12 @@ export class ChatWidget extends HTMLElement {
                             </button>
                         </form>
                     </div>
+                </div>
+
+                <!-- Animated Prompt -->
+                <div id="chat-prompt" class="chat-prompt-anim bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 text-sm font-medium relative max-w-[200px] text-center">
+                    Do you want to customized your order?
+                    <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-gray-800 border-b border-r border-gray-100 dark:border-gray-700 transform rotate-45"></div>
                 </div>
 
                 <!-- Toggle Button -->
@@ -123,8 +141,10 @@ export class ChatWidget extends HTMLElement {
         const toggleBtn = this.querySelector('#toggle-chat');
         const icon = toggleBtn?.querySelector('.material-symbols-outlined');
         const badge = this.querySelector('#chat-badge');
+        const prompt = this.querySelector('#chat-prompt');
 
         if (this.isOpen) {
+            prompt?.classList.add('hidden');
             chatWindow?.classList.remove('hidden');
             // Small delay for transition
             requestAnimationFrame(() => {

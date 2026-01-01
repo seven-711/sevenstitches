@@ -48,7 +48,7 @@ async function init() {
                                     </div>
                                     
                                     <div class="mt-6 flex items-center gap-2">
-                                        <input type="checkbox" id="review-anonymous" class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4">
+                                        <input type="checkbox" id="review-anonymous" class="rounded border-gray-600 text-primary focus:ring-primary h-4 w-4">
                                         <label for="review-anonymous" class="text-sm text-gray-700 dark:text-gray-300 select-none cursor-pointer">Hide my name (Review anonymously)</label>
                                     </div>
                                 </div>
@@ -239,11 +239,12 @@ function getStatusConfig(status: string) {
                                 <span class="material-symbols-outlined text-2xl fill-current">star</span>
                             </button>
                         `).join('')}
-                        <input type="hidden" class="rating-value" value="5">
+                        <input type="hidden" class="rating-value" value="0">
                     </div>
-                    <div class="mb-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 ml-1">How much did you like the product?</p>
+                    <div class="mb-4 ml-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Write a Review</label>
-                        <textarea id="review-comment" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none" placeholder="What did you like or dislike?"></textarea>
+                        <textarea id="review-comment" rows="3" class="w-full px-4 py-3 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none" placeholder="What did you like or dislike?"></textarea>
                     </div>
 
                     <div class="mb-6">
@@ -264,7 +265,7 @@ function getStatusConfig(status: string) {
                 const stars = itemDiv.querySelectorAll('.star-btn');
                 const input = itemDiv.querySelector('.rating-value') as HTMLInputElement;
 
-                updateStars(stars, 5);
+                updateStars(stars, 0);
 
                 stars.forEach(btn => {
                     btn.addEventListener('click', (e) => {
