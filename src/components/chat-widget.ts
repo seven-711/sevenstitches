@@ -74,7 +74,7 @@ export class ChatWidget extends HTMLElement {
 
                 <!-- Animated Prompt -->
                 <div id="chat-prompt" class="chat-prompt-anim bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 text-sm font-medium relative max-w-[200px] text-center">
-                    Do you want to customized your order?
+                    Do you want to customize your order?
                     <div class="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-gray-800 border-b border-r border-gray-100 dark:border-gray-700 transform rotate-45"></div>
                 </div>
 
