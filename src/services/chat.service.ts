@@ -17,6 +17,7 @@ export interface Conversation {
     status: 'open' | 'closed';
     last_message_at: string;
     created_at: string;
+    unread_count?: number;
 }
 
 export const ChatService = {
@@ -92,7 +93,40 @@ export const ChatService = {
             .order('last_message_at', { ascending: false });
 
         if (error) throw error;
-        return data as Conversation[];
+
+        // Fetch unread counts
+        const { data: unreadData, error: unreadError } = await supabase
+            .from('consumers_messages')
+            .select('conversation_id')
+            .eq('is_read', false)
+            .eq('sender_type', 'customer');
+
+        if (unreadError) console.error('Error fetching unread counts', unreadError);
+
+        const counts: Record<string, number> = {};
+        if (unreadData) {
+            unreadData.forEach((msg: any) => {
+                counts[msg.conversation_id] = (counts[msg.conversation_id] || 0) + 1;
+            });
+        }
+
+        const conversations = (data as Conversation[]).map(c => ({
+            ...c,
+            unread_count: counts[c.id] || 0
+        }));
+
+        return conversations;
+    },
+
+    async markAsRead(conversationId: string) {
+        const { error } = await supabase
+            .from('consumers_messages')
+            .update({ is_read: true })
+            .eq('conversation_id', conversationId)
+            .eq('sender_type', 'customer')
+            .eq('is_read', false);
+
+        if (error) throw error;
     },
 
     subscribeToMessages(conversationId: string, callback: (msg: ChatMessage) => void) {

@@ -93,7 +93,10 @@ export async function renderChat(container: HTMLElement) {
             <div class="conversation-item p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors" data-id="${c.id}">
                 <div class="flex justify-between items-start mb-1">
                     <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate w-32">${c.guest_name || 'Customer'}</h4>
-                    <span class="text-[10px] text-gray-400">${new Date(c.last_message_at).toLocaleDateString()}</span>
+                    <div class="flex items-center gap-2">
+                        ${c.unread_count && c.unread_count > 0 ? `<span class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center" id="badge-${c.id}">${c.unread_count}</span>` : ''}
+                        <span class="text-[10px] text-gray-400">${new Date(c.last_message_at).toLocaleDateString()}</span>
+                    </div>
                 </div>
                 <p class="text-xs text-gray-500 truncate">${c.guest_email || 'No email'}</p>
             </div>
@@ -130,14 +133,19 @@ export async function renderChat(container: HTMLElement) {
         if (nameEl) nameEl.textContent = conv.guest_name || 'Customer';
         if (infoEl) infoEl.textContent = conv.guest_email || '';
 
-        // Highlight
+        // Highlight & Remove Badge
         listContainer?.querySelectorAll('.conversation-item').forEach(el => {
             if (el.getAttribute('data-id') === id) {
                 el.classList.add('bg-blue-50', 'dark:bg-blue-900/20');
+                const badge = el.querySelector(`#badge-${id}`);
+                if (badge) badge.remove();
             } else {
                 el.classList.remove('bg-blue-50', 'dark:bg-blue-900/20');
             }
         });
+
+        // Mark as Read in DB
+        ChatService.markAsRead(id).catch(console.error);
 
         if (messagesContainer) {
             messagesContainer.innerHTML = '<div class="flex h-full items-center justify-center"><span class="material-symbols-outlined animate-spin">progress_activity</span></div>';
