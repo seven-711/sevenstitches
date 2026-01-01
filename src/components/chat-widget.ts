@@ -24,7 +24,7 @@ export class ChatWidget extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div id="chat-widget-container" class="fixed bottom-20 sm:bottom-6 right-6 z-[9999] flex flex-col items-end gap-4 font-sans">
+            <div id="chat-widget-container" class="fixed bottom-10 sm:bottom-6 right-6 z-[9999] flex flex-col items-end gap-4 font-sans">
                 <style>
                     @keyframes fadeLoop {
                         0% { opacity: 0; transform: translateY(10px); visibility: hidden; }
