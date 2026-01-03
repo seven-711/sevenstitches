@@ -295,7 +295,7 @@ async function initHomepage() {
 
                 return `
                 <div class="group flex flex-col gap-3">
-                  <div class="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  <div class="relative w-full aspect-[4/5] rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800">
                     ${badgeHtml}
                     <button
                       class="absolute top-3 right-3 size-8 bg-white/50 hover:bg-white rounded-full flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 text-primary">
