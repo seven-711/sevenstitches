@@ -24,6 +24,7 @@ export default defineConfig({
                 help: 'pages/help.html',
                 contact: 'pages/contact.html',
                 orders: 'pages/orders.html',
+                chat: 'pages/chat.html',
             },
         },
     },

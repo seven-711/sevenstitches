@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Chat with Us - Seven Stitches</title>
+    <link rel="icon" type="image/jpeg" href="/logo1.jpg" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="font-display bg-background-light dark:bg-background-dark text-[#0f172a] dark:text-[#e2e8f0] h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header
+        class="bg-white dark:bg-[#1e293b] border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between shrink-0 z-50">
+        <div class="flex items-center gap-3">
+            <a href="/" class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <span class="material-symbols-outlined text-gray-600 dark:text-gray-300">arrow_back</span>
+            </a>
+            <div class="relative">
+                <img src="/logo1.jpg" alt="Profile"
+                    class="size-10 rounded-full border border-gray-100 dark:border-gray-700">
+                <span
+                    class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white dark:border-[#1e293b] rounded-full"></span>
+            </div>
+            <div>
+                <h1 class="font-bold text-base leading-tight">Seven Stitches</h1>
+                <p class="text-xs text-primary font-medium">Online</p>
+            </div>
+        </div>
+        <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-primary">
+            <span class="material-symbols-outlined">call</span>
+        </button>
+    </header>
+
+    <!-- Chat Content -->
+    <main id="chat-content" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+        <!-- Messages will be injected here -->
+        <div class="flex h-full items-center justify-center">
+            <span class="material-symbols-outlined text-4xl animate-spin text-primary">progress_activity</span>
+        </div>
+    </main>
+
+    <!-- Input Area -->
+    <footer class="bg-white dark:bg-[#1e293b] border-t border-gray-200 dark:border-gray-800 p-4 shrink-0">
+        <form id="chat-form" class="flex gap-2 items-center max-w-[1440px] mx-auto">
+            <button type="button" class="p-2 text-gray-400 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">add_circle</span>
+            </button>
+            <input type="text" id="message-input"
+                class="flex-1 bg-gray-100 dark:bg-gray-800 border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-primary dark:text-white transition-shadow"
+                placeholder="Message..." autocomplete="off">
+            <button type="submit"
+                class="p-3 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-xl">send</span>
+            </button>
+        </form>
+    </footer>
+
+    <script type="module" src="/src/pages/chat.ts"></script>
+</body>
+
+</html>

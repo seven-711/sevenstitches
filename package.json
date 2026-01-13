@@ -24,6 +24,8 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@react-grab/gemini": "^0.0.98",
+    "react-grab": "^0.0.98",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
     "vite-plugin-checker": "^0.12.0"
