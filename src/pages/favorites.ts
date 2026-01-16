@@ -82,13 +82,13 @@ const renderFavorites = async () => {
                         <a href="/pages/product.html?id=${product.id}" class="block h-full">
                             <div class="relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden bg-[#f1f5f9] dark:bg-[#1e293b] mb-3 shadow-sm group-hover:shadow-xl transition-all duration-500">
                                 <div class="w-full h-full bg-contain bg-center bg-no-repeat transform group-hover:scale-110 transition-transform duration-700 drop-shadow-xl"
-                                  style="${imageStyle} background-size: 85%;">
+                                  style="${imageStyle} background-size: cover;">
                                   ${fallbackContent}
                                 </div>
                             </div>
                             <div class="flex flex-col pl-1 gap-1">
                                 <h3 class="font-bold text-xs leading-tight text-[#0f172a] dark:text-[#e2e8f0] line-clamp-2 group-hover:text-primary transition-colors">${product.name}</h3>
-                                <div class="flex items-center justify-between">
+                                <div class="flex flex-col items-start gap-1 md:flex-row md:items-center md:justify-between">
                                     <span class="font-black text-lg text-[#0f172a] dark:text-white">₱${product.price ? Number(product.price).toFixed(2) : '0.00'}</span>
                                      <div class="flex items-center gap-1">
                                         <div class="flex items-center">${starsHTML}</div>

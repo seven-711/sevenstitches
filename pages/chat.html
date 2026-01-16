@@ -75,9 +75,13 @@
     </main>
 
     <!-- Input Area -->
-    <footer class="bg-white dark:bg-[#1e293b] border-t border-gray-200 dark:border-gray-800 p-4 shrink-0 mb-10 md:mb-0">
-        <form id="chat-form" class="flex gap-2 items-center max-w-[1440px] mx-auto">
-            <button type="button" class="p-2 text-gray-400 hover:text-primary transition-colors">
+    <footer
+        class="bg-white dark:bg-[#1e293b] border-t border-gray-200 dark:border-gray-800 p-2 shrink-0 mb-10 md:mb-0 flex flex-col gap-1 transition-all">
+        <div id="attachment-preview"
+            class="hidden px-4 py-2 gap-2 overflow-x-auto border-b border-gray-100 dark:border-gray-800"></div>
+        <form id="chat-form" class="flex gap-2 items-center w-full max-w-[1440px] mx-auto">
+            <input type="file" id="chat-file-input" class="hidden" accept="image/*,video/*" multiple />
+            <button type="button" id="attach-btn" class="p-2 text-gray-400 hover:text-primary transition-colors">
                 <span class="material-symbols-outlined">add_circle</span>
             </button>
             <input type="text" id="message-input"

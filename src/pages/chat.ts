@@ -4,7 +4,9 @@ import { ChatService, ChatMessage, Conversation } from '../services/chat.service
 class ChatPage {
     private conversation: Conversation | null = null;
     private messages: ChatMessage[] = [];
+
     private user: any = null;
+    private pendingAttachments: { type: 'image' | 'video', src: string }[] = [];
 
 
     constructor() {
@@ -19,21 +21,74 @@ class ChatPage {
 
     setupEventListeners() {
         const chatForm = document.querySelector('#chat-form');
+        const attachBtn = document.querySelector('#attach-btn');
+        const fileInput = document.querySelector('#chat-file-input') as HTMLInputElement;
+        const previewContainer = document.querySelector('#attachment-preview');
+
+        attachBtn?.addEventListener('click', () => fileInput?.click());
+
+        fileInput?.addEventListener('change', () => {
+            const files = fileInput.files;
+            if (!files || files.length === 0) return;
+
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+                    alert('Only images and videos are supported.');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const src = e.target?.result as string;
+                    const type = file.type.startsWith('image/') ? 'image' : 'video';
+                    this.pendingAttachments.push({ type, src });
+                    this.renderPreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+            fileInput.value = '';
+        });
+
+        // Handle Preview Removals
+        previewContainer?.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            const removeBtn = target.closest('.remove-attachment');
+            if (removeBtn) {
+                const index = parseInt(removeBtn.getAttribute('data-index') || '-1');
+                if (index > -1) {
+                    this.pendingAttachments.splice(index, 1);
+                    this.renderPreviews();
+                }
+            }
+        });
+
         chatForm?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const input = document.querySelector('#message-input') as HTMLInputElement;
             const btn = chatForm.querySelector('button[type="submit"]') as HTMLButtonElement;
             const content = input.value.trim();
 
-            if (!content || !this.conversation) return;
+            if ((!content && this.pendingAttachments.length === 0) || !this.conversation) return;
 
             const isFirstMessage = this.messages.length === 0;
 
-            input.value = '';
             if (btn) btn.disabled = true;
 
             try {
-                await ChatService.sendMessage(this.conversation.id, content, 'customer');
+                // Send Text if Exists
+                if (content) {
+                    await ChatService.sendMessage(this.conversation.id, content, 'customer');
+                    input.value = '';
+                }
+
+                // Send Queued Attachments
+                for (const media of this.pendingAttachments) {
+                    const payload = `:::MEDIA:::${JSON.stringify(media)}`;
+                    await ChatService.sendMessage(this.conversation.id, payload, 'customer');
+                }
+
+                // Clear Queue
+                this.pendingAttachments = [];
+                this.renderPreviews();
 
                 if (isFirstMessage) {
                     setTimeout(async () => {
@@ -53,6 +108,32 @@ class ChatPage {
                 input.focus();
             }
         });
+    }
+
+    renderPreviews() {
+        const container = document.querySelector('#attachment-preview');
+        if (!container) return;
+
+        if (this.pendingAttachments.length === 0) {
+            container.classList.add('hidden');
+            container.classList.remove('flex');
+            container.innerHTML = '';
+            return;
+        }
+
+        container.classList.remove('hidden');
+        container.classList.add('flex');
+        container.innerHTML = this.pendingAttachments.map((media, index) => `
+            <div class="relative shrink-0 group animate-in fade-in zoom-in duration-300">
+                ${media.type === 'image'
+                ? `<img src="${media.src}" class="h-20 w-20 object-cover rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm" />`
+                : `<video src="${media.src}" class="h-20 w-20 object-cover rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"></video>`
+            }
+                <button type="button" data-index="${index}" class="remove-attachment absolute -top-2 -right-2 size-6 flex items-center justify-center bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition-colors z-10">
+                    <span class="material-symbols-outlined text-sm font-bold">close</span>
+                </button>
+            </div>
+        `).join('');
     }
 
     async initChatFlow() {
@@ -199,7 +280,8 @@ class ChatPage {
                 ? 'bg-primary text-white rounded-tr-sm'
                 : 'bg-white dark:bg-[#1e293b] border border-gray-100 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm'
             }">
-                    ${this.escapeHtml(msg.content)}
+            
+                    ${this.renderMessageContent(msg.content)}
                 </div>
                 <span class="text-[10px] text-gray-400 mt-1 px-1 font-medium select-none">
                     ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -227,6 +309,23 @@ class ChatPage {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+    }
+
+    renderMessageContent(content: string) {
+        if (content.startsWith(':::MEDIA:::')) {
+            try {
+                const json = content.substring(11); // Remove :::MEDIA:::
+                const data = JSON.parse(json);
+                if (data.type === 'image') {
+                    return `<img src="${data.src}" class="max-w-full max-h-[300px] rounded-lg border border-gray-200 dark:border-gray-700" loading="lazy" />`;
+                } else if (data.type === 'video') {
+                    return `<video src="${data.src}" controls class="max-w-full max-h-[300px] rounded-lg border border-gray-200 dark:border-gray-700"></video>`;
+                }
+            } catch (e) {
+                return '<span class="italic text-gray-400">Invalid Media Attachment</span>';
+            }
+        }
+        return this.escapeHtml(content).replace(/\n/g, '<br>');
     }
 }
 

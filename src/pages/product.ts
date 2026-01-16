@@ -45,7 +45,7 @@ const productId = urlParams.get('id');
                     thumbnailsHtml = `
                         <div class="flex gap-4 mt-6 overflow-x-auto pb-2 scrollbar-hide">
                             ${images.map((src, index) => `
-                                <button class="thumbnail-btn relative w-20 h-24 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${index === 0 ? 'border-primary' : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'}" 
+                                <button class="thumbnail-btn relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden border-2 transition-all ${index === 0 ? 'border-primary' : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'}" 
                                     data-src="${src}" aria-label="View image ${index + 1}">
                                     <img src="${src}" alt="Thumbnail ${index + 1}" class="w-full h-full object-cover" />
                                 </button>
@@ -123,9 +123,9 @@ const productId = urlParams.get('id');
                                 <!-- Back Blob -->
                                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-primary/10 blur-3xl rounded-full"></div>
                                 
-                                ${mainImageHtml.replace('class="w-full h-full object-cover', 'class="w-[85%] h-[85%] object-contain z-10 drop-shadow-2xl')}
+                                ${mainImageHtml.replace('class="w-full h-full object-cover', 'class="w-full h-full object-cover z-10"')}
                                 
-                                <button class="absolute top-6 right-6 z-20 p-3 bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm">
+                                <button class="absolute top-6 right-6 z-20 h-11 w-11 flex items-center justify-center bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm">
                                     <span class="material-symbols-outlined text-xl">favorite</span>
                                 </button>
                             </div>
@@ -143,8 +143,8 @@ const productId = urlParams.get('id');
                                 <div class="flex items-center justify-between">
                                     <span class="text-2xl font-black text-primary">₱${Number(product.price).toFixed(2)}</span>
                                     <div class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-yellow-400 text-lg icon-filled" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        <span class="text-sm font-bold text-gray-500">${ratingData.average > 0 ? ratingData.average.toFixed(1) : 'New'}</span>
+                                        <div class="flex items-center">${ratingStarsHtml}</div>
+                                        <span class="text-sm font-bold text-gray-500 ml-1">${ratingData.average > 0 ? ratingData.average.toFixed(1) : 'New'}</span>
                                     </div>
                                 </div>
                             </div>
