@@ -316,7 +316,7 @@ async function initHomepage() {
                   </div>
                   <div class="flex flex-col gap-1">
                     <div class="flex justify-between items-start">
-                      <a href="/pages/product.html?id=${product.id}" class="font-bold text-lg leading-tight group-hover:text-primary transition-colors cursor-pointer line-clamp-1">
+                      <a href="/pages/product.html?id=${product.id}" class="font-bold text-xs leading-tight group-hover:text-primary transition-colors cursor-pointer line-clamp-2">
                         ${product.name}
                       </a>
                       <span class="font-bold text-primary">₱${product.price.toFixed(2)}</span>

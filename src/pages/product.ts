@@ -116,79 +116,78 @@ const productId = urlParams.get('id');
 
 
                 container.innerHTML = `
-                    <div class="flex flex-col md:flex-row gap-8 lg:gap-16">
-                        <!-- Image Gallery -->
+                    <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 items-start">
+                        <!-- Image Gallery (Card Style) -->
                         <div class="w-full md:w-1/2">
-                            <div class="aspect-[4/5] w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-slate-800 shadow-xl relative">
-                                ${mainImageHtml}
+                            <div class="aspect-square bg-gray-50 dark:bg-slate-800 rounded-[2.5rem] relative overflow-hidden flex items-center justify-center group shadow-inner">
+                                <!-- Back Blob -->
+                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-primary/10 blur-3xl rounded-full"></div>
+                                
+                                ${mainImageHtml.replace('class="w-full h-full object-cover', 'class="w-[85%] h-[85%] object-contain z-10 drop-shadow-2xl')}
+                                
+                                <button class="absolute top-6 right-6 z-20 p-3 bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">favorite</span>
+                                </button>
                             </div>
-                            ${thumbnailsHtml}
+                            
+                            <!-- Minimal Thumbnails -->
+                            ${thumbnailsHtml ? `<div class="flex justify-center gap-3 mt-4">${thumbnailsHtml.replace(/w-20 h-24/g, 'size-14 rounded-lg')}</div>` : ''}
                         </div>
                         
-                        <!-- Details -->
-                        <div class="w-full md:w-1/2 flex flex-col justify-center">
-                            <div class="mb-6">
-                                <span class="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
-                                    ${(product as any).categories?.name || 'Product'}
-                                </span>
-                                <h1 class="text-3xl md:text-5xl font-black leading-tight mb-2 text-gray-900 dark:text-white">${product.name}</h1>
-                                
-                                <!-- Rating Header -->
-                                <div class="flex items-center gap-2 mb-4">
-                                    <div class="flex items-center gap-0.5">${ratingStarsHtml}</div>
-                                    <p class="text-sm text-gray-500 hover:underline cursor-pointer">(${ratingData.count} reviews)</p>
-                                </div>
-
-                                <p class="text-2xl font-bold text-primary">₱${Number(product.price).toFixed(2)}</p>
-                                <div class="mt-2 text-sm">
-                                    ${(product.inventory_count || 0) > 0
-                        ? `<span class="${(product.inventory_count || 0) < 5 ? 'text-red-500 font-bold' : 'text-gray-500'}">
-                                            ${product.inventory_count || 0} in stock
-                                           </span>`
-                        : (() => {
-                            const today = new Date();
-                            const start = new Date(today); start.setDate(today.getDate() + 7);
-                            const end = new Date(today); end.setDate(today.getDate() + 14);
-
-                            // Manual formatting to match "3 - 14 Jan" style if months match, or "3 Jan - 14 Jan" if not.
-                            // Simpler approach: "d MMM" - "d MMM"
-                            const endStr = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(end);
-                            // If same month for simple logic:
-                            const dateRange = `${start.getDate()} - ${endStr}`;
-
-                            return `
-                                            <div class="flex items-center gap-2 text-teal-600 font-medium">
-                                                <span class="material-symbols-outlined text-[20px]">local_shipping</span>
-                                                <span>(Pre-order) Get by ${dateRange}</span>
-                                                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                                            </div>
-                                            `;
-                        })()
-                    }
+                        <!-- Details (Compact Card) -->
+                        <div class="w-full md:w-1/2 bg-white dark:bg-[#1e293b] rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-gray-100 dark:border-slate-800">
+                            <!-- Header -->
+                            <div class="mb-5">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">${(product as any).categories?.name || 'Product'}</span>
+                                <h1 class="text-2xl md:text-3xl font-black leading-tight text-gray-900 dark:text-white mb-2">${product.name}</h1>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-2xl font-black text-primary">₱${Number(product.price).toFixed(2)}</span>
+                                    <div class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-yellow-400 text-lg icon-filled" style="font-variation-settings: 'FILL' 1;">star</span>
+                                        <span class="text-sm font-bold text-gray-500">${ratingData.average > 0 ? ratingData.average.toFixed(1) : 'New'}</span>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-                                ${product.description || 'No description available.'}
-                            </p>
-                            
-                            <div class="flex gap-4">
-                                <div class="flex items-center border border-gray-200 dark:border-slate-700 rounded-full h-12 px-2 bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
-                                     <button id="qty-minus" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500">
-                                        <span class="material-symbols-outlined text-sm">remove</span>
-                                     </button>
-                                     <input type="number" id="quantity" value="1" min="1" class="w-12 bg-transparent border-none text-center focus:ring-0 p-0" />
-                                     <button id="qty-plus" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500">
-                                        <span class="material-symbols-outlined text-sm">add</span>
-                                     </button>
+
+                            <!-- Description (Compact) -->
+                            <div class="mb-6 bg-gray-50 dark:bg-slate-800/50 rounded-2xl p-4">
+                                <h3 class="text-xs font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wider">Description</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-3 hover:line-clamp-none transition-all cursor-pointer">
+                                    ${product.description || 'No description available.'}
+                                </p>
+                            </div>
+
+                            <!-- Control Bar (Reference Style) -->
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <!-- Size (Mock) -->
+                                <div class="bg-gray-50 dark:bg-slate-800 rounded-2xl p-3 flex flex-col items-center justify-center cursor-not-allowed opacity-50">
+                                    <span class="text-[10px] uppercase font-bold text-gray-400 mb-1">Size</span>
+                                    <span class="font-bold text-sm">One Size</span>
                                 </div>
-                                <button id="add-to-cart" class="flex-1 h-12 bg-primary hover:bg-primary/90 text-white text-sm md:text-base font-bold rounded-md shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined text-[15px] md:text-[24px]">shopping_cart</span>
+                                <!-- Color (Mock) -->
+                                <div class="bg-gray-50 dark:bg-slate-800 rounded-2xl p-3 flex flex-col items-center justify-center cursor-not-allowed opacity-50">
+                                    <span class="text-[10px] uppercase font-bold text-gray-400 mb-1">Color</span>
+                                    <div class="w-4 h-4 rounded-full bg-primary/80 shadow-sm"></div>
+                                </div>
+                                <!-- Quantity -->
+                                <div class="bg-primary/5 dark:bg-primary/20 rounded-2xl py-1 px-0 flex flex-col items-center justify-center border border-primary/10 h-full">
+                                    <span class="text-[9px] uppercase font-bold text-primary mb-1 opacity-80">Qty</span>
+                                    <div class="flex items-center gap-1 px-1">
+                                        <button id="qty-minus" class="w-6 h-6 flex items-center justify-center rounded-full bg-white/40 dark:bg-white/10 hover:bg-white/60 text-primary transition-all font-bold text-lg leading-none pb-0.5">-</button>
+                                        <input type="number" id="quantity" value="1" min="1" class="w-8 bg-transparent border-none text-center font-black text-sm p-0 text-primary focus:ring-0" />
+                                        <button id="qty-plus" class="w-6 h-6 flex items-center justify-center rounded-full bg-white/40 dark:bg-white/10 hover:bg-white/60 text-primary transition-all font-bold text-lg leading-none pb-0.5">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex flex-col gap-3">
+                                <button id="add-to-cart" class="w-full h-14 bg-primary hover:bg-primary/90 text-white text-base font-bold rounded-2xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2 active:scale-95">
+                                    <span class="material-symbols-outlined">shopping_bag</span>
                                     Add to Cart
                                 </button>
-                                <button id="buy-now" class="flex-1 h-12 bg-white dark:bg-slate-800 border-2 border-primary text-primary text-sm md:text-base font-bold rounded-md hover:bg-primary/5 dark:hover:bg-primary/10 transition-all flex items-center justify-center gap-2 shadow-sm">
-                                    <span class="material-symbols-outlined text-[18px] md:text-[24px]">bolt</span>
-                                    Buy Now
+                                <button id="buy-now" class="w-full py-2 text-xs font-bold text-gray-400 hover:text-primary transition-colors">
+                                    Buy Now (Instant Checkout)
                                 </button>
                             </div>
                         </div>

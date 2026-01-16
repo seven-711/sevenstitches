@@ -83,7 +83,7 @@ const categoryTitle = document.getElementById('category-title');
                   </div>
                   <div class="flex flex-col gap-1">
                     <div class="flex justify-between items-start">
-                      <h3 class="font-bold text-lg leading-tight group-hover:text-primary transition-colors">${product.name}</h3>
+                      <h3 class="font-bold text-xs leading-tight group-hover:text-primary transition-colors line-clamp-2">${product.name}</h3>
                       <span class="font-bold text-primary">₱${product.price ? Number(product.price).toFixed(2) : '0.00'}</span>
                     </div>
                     

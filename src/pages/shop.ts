@@ -3,6 +3,8 @@ import '../components/header';
 import { ProductService } from '../services/product.service';
 import { ReviewService } from '../services/review.service';
 import { CategoryService } from '../services/category.service';
+import { WishlistService } from '../services/wishlist.service';
+import { Toast } from '../components/toast';
 
 
 // Ensure Header is defined
@@ -111,7 +113,6 @@ const productGrid = document.getElementById('product-grid');
 
           // Rating Stars
           const avg = product.rating.average || 0;
-          const count = product.rating.count || 0;
           const fullStars = Math.floor(avg);
           const hasHalfStar = avg % 1 >= 0.5;
 
@@ -126,37 +127,67 @@ const productGrid = document.getElementById('product-grid');
             }
           }
 
+
+          const isInWishlist = WishlistService.isInWishlist(product.id);
+          const heartFill = isInWishlist ? 1 : 0;
+          const heartClass = isInWishlist ? 'text-red-500' : 'text-black dark:text-white';
+
           return `
-                    <a href="/pages/product.html?id=${product.id}" class="group flex flex-col gap-3">
-                      <div class="relative w-full aspect-[4/5] rounded-xl overflow-hidden bg-gray-100 dark:bg-slate-800">
-                        <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                          style="${imageStyle}">
-                          ${fallbackContent}
-                        </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-center pb-6">
-                          <span class="bg-white text-black text-sm font-bold py-2 px-6 rounded-full hover:bg-gray-100 transform translate-y-4 group-hover:translate-y-0 transition-transform">View Details</span>
-                        </div>
-                      </div>
-                      <div class="flex flex-col gap-1">
-                        <div class="flex justify-between items-start">
-                          <h3 class="font-bold text-lg leading-tight group-hover:text-primary transition-colors">${product.name}</h3>
-                          <span class="font-bold text-primary">₱${product.price ? Number(product.price).toFixed(2) : '0.00'}</span>
-                        </div>
-                        
-                        <!-- Ratings & Stats -->
-                        <div class="flex items-center gap-1">
-                            <div class="flex items-center">${starsHTML}</div>
-                            <span class="text-xs text-gray-500 ml-1">(${count})</span>
-                        </div>
-    
-                        <div class="flex justify-between items-center text-sm text-gray-500 mt-1">
-                          <span>${(product as any).categories?.name || 'Product'}</span>
-                          <span class="${(product.inventory_count || 0) < 5 ? 'text-red-500 font-medium' : ''}">${product.inventory_count || 0} in stock</span>
-                        </div> 
-                      </div>
-                    </a>
+                    <div class="group relative flex flex-col gap-3 animate-fade-in">
+                        <!-- Wishlist Button -->
+                        <button data-id="${product.id}" class="wishlist-btn absolute top-2 right-2 z-20 size-8 flex items-center justify-center bg-white/60 dark:bg-black/40 backdrop-blur-md rounded-full ${heartClass} hover:bg-red-50 hover:text-red-500 transition-all shadow-sm">
+                             <span class="material-symbols-outlined text-[18px] font-bold icon-filled" style="font-variation-settings: 'FILL' ${heartFill};">favorite</span>
+                        </button>
+
+                        <a href="/pages/product.html?id=${product.id}" class="block h-full">
+                            <div class="relative w-full aspect-[4/5] rounded-[1.5rem] overflow-hidden bg-[#f1f5f9] dark:bg-[#1e293b] mb-3 shadow-sm group-hover:shadow-xl transition-all duration-500">
+                                <div class="w-full h-full bg-contain bg-center bg-no-repeat transform group-hover:scale-110 transition-transform duration-700 drop-shadow-xl"
+                                  style="${imageStyle} background-size: 85%;">
+                                  ${fallbackContent}
+                                </div>
+                            </div>
+                            <div class="flex flex-col pl-1 gap-1">
+                                <h3 class="font-bold text-xs leading-tight text-[#0f172a] dark:text-[#e2e8f0] line-clamp-2 group-hover:text-primary transition-colors">${product.name}</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-black text-lg text-[#0f172a] dark:text-white">₱${product.price ? Number(product.price).toFixed(2) : '0.00'}</span>
+                                    <div class="flex items-center gap-1">
+                                        <div class="flex items-center">${starsHTML}</div>
+                                        <span class="text-xs font-bold text-gray-500">${avg > 0 ? avg.toFixed(1) : ''}</span>
+                                    </div>
+                                </div>
+                            </div> 
+                        </a>
+                    </div>
                     `;
         }).join('');
+
+        // Attach Event Listeners to Heart Buttons
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const id = btn.getAttribute('data-id');
+            const icon = btn.querySelector('span');
+
+            if (id && icon) {
+              const isNowInWishlist = WishlistService.toggleWishlist(id);
+
+              // Optimistic UI Update
+              if (isNowInWishlist) {
+                btn.classList.remove('text-black', 'dark:text-white');
+                btn.classList.add('text-red-500');
+                icon.style.fontVariationSettings = "'FILL' 1";
+                Toast.show('Added to favorites', 'success');
+              } else {
+                btn.classList.add('text-black', 'dark:text-white');
+                btn.classList.remove('text-red-500');
+                icon.style.fontVariationSettings = "'FILL' 0";
+                Toast.show('Removed from favorites', 'info');
+              }
+            }
+          });
+        });
       };
 
       // Apply Filters Function
@@ -194,4 +225,95 @@ const productGrid = document.getElementById('product-grid');
       productGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Failed to load products.</p>';
     }
   }
+
+  // --- Mobile Carousel Logic ---
+  const initMobileCarousel = () => {
+    const card = document.getElementById('mobile-promo-card');
+    const content = document.getElementById('mobile-promo-content');
+    const image = document.getElementById('mobile-promo-image') as HTMLImageElement;
+    const dotsContainer = document.getElementById('mobile-promo-dots');
+
+    if (!card || !content || !image || !dotsContainer) return;
+
+    const slides = [
+      {
+        title: 'Flat 50% discount on your first order.',
+        btn: 'Buy Now',
+        bg: 'bg-[#1e293b]', // slate-800
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPDk-3YDj-0t12k5qYBcBl3gWsAjjoPGNIXJsElwl5k07ckHUY5ikmiExZGN_gUkzjNCFVEA3rL3rBbH2ySG1MF54Uy0NdcN0a5LLMf3A84gul0EAtJTWlZd5pG5H_isGFn3pbkYDWr5B5cnsq9GMPXB34Vi3_HhFPpDTsFmTqCnI1Zah1mPDJwMqpilhJv2mWJ-MTvwrNy6x5KmUe2GzM4vyT2czlExkshQdusA0dAkTtZ0A1hZ5WiY1AIqIJrEdtoVOc5524m8Hv'
+      },
+      {
+        title: 'New Crochet Collection Arrived.',
+        btn: 'Shop New',
+        bg: 'bg-[#701a75]', // fuchsia-900
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB7FQ3zuv-x21Hv6odsfykUXKADwuJk5ybNW1NepTQJYblAKcZ-_uBhWbVru3joEZ06hOxj0LQ2zZ28dQfqZoR3XVcE_8Ukfsm2ojSZacDLHsV8Ylz4S0aGxZSqufkZW1KK2QbG6C1qWvJunSX5VyB1CtddCpjhuZGyL3kJ1I9N381R7wSgtCVqP8v1V1wlW9As786fOSWcknuEAqsylnLd6iqNcEpKkkG_RPwZcTSC3KB2imA8gKD6qF9_3En_0jwyxHyP0Ll2Gtu_'
+      },
+      {
+        title: 'Free Shipping on Orders over ₱2000.',
+        btn: 'Learn More',
+        bg: 'bg-[#047857]', // emerald-700
+        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANSJ97_luLSLOVFg0-fBKxb9CxE5kCZumQv7XZTRcefIUHYINgTYzCQbdNSeWVevrVbGTbVrNRPKvpfFRmy8sP4zr09kdt92OkY5zAOJnZzgjcftPqRdV2wHk4wax4vSRPa8QpYOXMrxxl1cNq8Ul4Gz_8jP22ArcqK0lUDvK9d6p-WUjG7HsgFuK-e_cCE3B0cXhQkiQO08RVt2Vf_CDvwhp9SKKc82NM67CkLgr3_5NUmUfJZGUzK2pVUYY8IZq84VIp3HIsenjy'
+      }
+    ];
+
+    let currentIndex = 0;
+    const dots = Array.from(dotsContainer.children) as HTMLElement[];
+
+    const updateSlide = (index: number) => {
+      // Fade out
+      content.style.opacity = '0';
+      image.style.opacity = '0';
+      image.style.transform = 'translateY(-50%) translateX(20px) rotate(0deg) scale(0.9)'; // Slide out effect
+
+      setTimeout(() => {
+        const slide = slides[index];
+
+        // Update Content
+        content.innerHTML = `
+                <h2 class="text-white font-bold text-xl leading-snug">${slide.title}</h2>
+                <button class="bg-[#f97316] text-white text-sm font-bold px-6 py-2.5 rounded-full shadow-lg shadow-orange-500/20 active:scale-95 transition-transform hover:scale-105">
+                    ${slide.btn}
+                </button>
+            `;
+
+        image.src = slide.img;
+
+        // Update Background Class
+        // First remove all potential bg classes to be safe
+        card.classList.remove('bg-[#1e293b]', 'bg-[#701a75]', 'bg-[#047857]');
+        card.classList.add(slide.bg);
+
+        // Update Dots
+        dots.forEach((dot, i) => {
+          if (i === index) {
+            dot.classList.remove('bg-gray-300', 'dark:bg-gray-700');
+            dot.classList.add('bg-primary', 'scale-125');
+          } else {
+            dot.classList.add('bg-gray-300', 'dark:bg-gray-700');
+            dot.classList.remove('bg-primary', 'scale-125');
+          }
+        });
+
+        // Fade in
+        content.style.opacity = '1';
+        image.style.opacity = '1';
+        image.style.transform = 'translateY(-50%) rotate(-12deg) scale(1)'; // Reset transform
+
+        currentIndex = index;
+      }, 300);
+    };
+
+    // Auto Advance
+    setInterval(() => {
+      const nextIndex = (currentIndex + 1) % slides.length;
+      updateSlide(nextIndex);
+    }, 5000);
+
+    // Click on dots
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => updateSlide(index));
+    });
+  };
+
+  initMobileCarousel();
 })();

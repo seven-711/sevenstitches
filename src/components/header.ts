@@ -37,6 +37,8 @@ export class AppHeader extends HTMLElement {
 
               <a class="text-sm font-medium hover:text-primary transition-colors" href="/pages/orders.html">Orders</a>
 
+              <a class="text-sm font-medium hover:text-primary transition-colors" href="/pages/favorites.html">Favorites</a>
+
               <a class="text-sm font-medium hover:text-primary transition-colors" href="/pages/about.html">About</a>
             </nav>
           </div>
