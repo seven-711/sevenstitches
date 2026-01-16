@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
     <!-- Material Symbols for existing components that might use them (optional compatibility) -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="icon" type="image/jpeg" href="/logo1.jpg" />
 
     <script>
         tailwind.config = {
@@ -73,18 +74,19 @@
             display: none !important;
         }
     </style>
-  <script type="module" crossorigin src="/assets/admin-D4H_WbXE.js"></script>
+  <script type="module" crossorigin src="/assets/admin-C8RaM4Br.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/supabase-w99FfbcE.js">
   <link rel="modulepreload" crossorigin href="/assets/preload-helper-BXl3LOEh.js">
   <link rel="modulepreload" crossorigin href="/assets/auth.service-B-BoZdmw.js">
-  <link rel="modulepreload" crossorigin href="/assets/product.service-oboCqACv.js">
+  <link rel="modulepreload" crossorigin href="/assets/product.service-WrVGjX6i.js">
   <link rel="modulepreload" crossorigin href="/assets/category.service-ILwE1iue.js">
-  <link rel="modulepreload" crossorigin href="/assets/order.service-OlqknHmw.js">
+  <link rel="modulepreload" crossorigin href="/assets/order.service-B2ND8zN2.js">
   <link rel="modulepreload" crossorigin href="/assets/toast-CErdx8Qf.js">
+  <link rel="modulepreload" crossorigin href="/assets/chat.service-qiJSY3Sa.js">
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 transition-colors duration-200 antialiased h-screen overflow-hidden flex">
+    class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 transition-colors duration-200 antialiased h-[75dvh] md:min-h-screen md:h-auto overflow-hidden md:overflow-visible flex">
 
     <!-- Loading State -->
     <div id="admin-loading"
@@ -95,11 +97,16 @@
         </div>
     </div>
 
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-gray-900/50 z-20 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"
+        aria-hidden="true"></div>
+
     <!-- Sidebar -->
     <aside id="sidebar"
-        class="w-64 bg-surface-light dark:bg-surface-dark border-r border-gray-200 dark:border-gray-700 flex flex-col h-full flex-shrink-0 transition-all duration-300 hidden">
-        <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-800">
-            <span class="material-icons-round text-primary mr-2 text-3xl">gesture</span>
+        class="fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-30 w-64 bg-surface-light dark:bg-surface-dark border-r border-gray-200 dark:border-gray-700 flex flex-col md:h-auto transform transition-transform duration-300 -translate-x-full lg:translate-x-0 hidden">
+        <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-800 shrink-0">
+            <img src="/logo1.jpg" alt="Seven Stitches Logo" class="h-10 w-10 rounded-full mr-3 object-cover" />
             <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Seven Stitches</span>
         </div>
 
@@ -132,41 +139,78 @@
             </a>
 
             <a class="nav-item flex items-center px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl transition-colors group cursor-pointer"
+                data-view="messages">
+                <span class="material-icons-round mr-3 group-hover:text-primary transition-colors">chat</span>
+                <span class="font-medium">Messages</span>
+            </a>
+
+            <a class="nav-item flex items-center px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl transition-colors group cursor-pointer"
                 data-view="blog">
                 <span class="material-icons-round mr-3 group-hover:text-primary transition-colors">article</span>
                 <span class="font-medium">Blog</span>
             </a>
-        </nav>
 
-        <div class="p-4 border-t border-gray-100 dark:border-gray-800">
-            <a class="flex items-center px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors mb-2"
-                href="/">
-                <span class="material-icons-round mr-2 text-lg">storefront</span>
-                Back to Store
-            </a>
-            <button id="admin-logout"
-                class="w-full flex items-center justify-center px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <span class="material-icons-round mr-2 text-lg">logout</span>
-                Logout
-            </button>
-        </div>
+            <div class="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
+                <p class="px-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Account</p>
+                <a class="flex items-center px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl transition-colors group cursor-pointer"
+                    href="/">
+                    <span class="material-icons-round mr-3 group-hover:text-primary transition-colors">storefront</span>
+                    <span class="font-medium">Back to Store</span>
+                </a>
+                <button id="admin-logout"
+                    class="w-full flex items-center px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-colors group cursor-pointer text-left">
+                    <span class="material-icons-round mr-3">logout</span>
+                    <span class="font-medium">Logout</span>
+                </button>
+            </div>
+        </nav>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden hidden" id="main-content">
+    <main class="flex-1 flex flex-col h-[100dvh] md:min-h-screen md:h-auto overflow-hidden md:overflow-visible hidden"
+        id="main-content">
         <!-- Header -->
         <header
-            class="h-16 bg-surface-light dark:bg-surface-dark border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-8 flex-shrink-0 z-10">
-            <h1 class="text-xl font-bold text-gray-900 dark:text-white" id="page-title">Dashboard Overview</h1>
-            <div class="flex items-center space-x-4">
-                <button
-                    class="relative p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                    <span class="material-icons-round">notifications</span>
-                    <span
-                        class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
+            class="h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between px-4 sm:px-8 flex-shrink-0 z-50 transition-colors duration-300 shadow-sm sticky top-0">
+            <div class="flex items-center gap-4">
+                <button id="mobile-sidebar-toggle"
+                    class="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                    <span class="material-icons-round">menu</span>
                 </button>
-                <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-[2px]">
-                    <div class="h-full w-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white truncate" id="page-title">Dashboard Overview
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="admin-notification-btn"
+                        class="relative p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <span class="material-icons-round">notifications</span>
+                        <span id="admin-notification-badge"
+                            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center px-0.5 z-50 hidden"></span>
+                    </button>
+                    <!-- Dropdown -->
+                    <div id="admin-notification-dropdown"
+                        class="fixed inset-x-4 top-16 mt-2 md:absolute md:inset-auto md:right-0 md:mt-2 md:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hidden z-[100]">
+                        <div
+                            class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white">Notifications</h3>
+                            <button id="mark-all-read"
+                                class="text-xs text-primary hover:text-primary-dark font-medium">Mark all read</button>
+                        </div>
+                        <div id="notification-list" class="max-h-80 overflow-y-auto">
+                            <!-- Items will be injected here -->
+                            <div class="p-4 text-center text-gray-400 text-sm">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block"></div>
+
+                <div id="admin-profile-container"
+                    class="h-9 w-9 rounded-full bg-gradient-to-tr from-primary to-blue-400 p-[2px] cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+                    <div
+                        class="h-full w-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">
                         <span class="text-xs font-bold text-primary">AD</span>
                     </div>
                 </div>
@@ -174,7 +218,7 @@
         </header>
 
         <!-- Dynamic Content Area -->
-        <div class="flex-1 overflow-y-auto p-8" id="admin-view-container">
+        <div class="flex-1 overflow-y-auto md:overflow-visible p-4 md:p-8 pb-32" id="admin-view-container">
             <!-- Rendered components go here -->
         </div>
     </main>

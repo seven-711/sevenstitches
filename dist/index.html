@@ -2,11 +2,12 @@
 
 <html class="light" lang="en">
 
-<head>
+<head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta name="google-site-verification" content="UNA584NTEYU6gdvNjqKZdjtpiaZZXdvbhTqVyRig4XI" />
   <title>Seven Stitches - Handmade Warmth</title>
-  <link rel="icon" type="image/png" href="/favicon-circle.png" />
+  <link rel="icon" type="image/jpeg" href="/logo1.jpg" />
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet" />
@@ -36,13 +37,14 @@
       },
     }
   </script>
-  <script type="module" crossorigin src="/assets/main-CVq9kgxh.js"></script>
+  <script type="module" crossorigin src="/assets/main-Cf2OqH38.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/supabase-w99FfbcE.js">
+  <link rel="modulepreload" crossorigin href="/assets/preload-helper-BXl3LOEh.js">
   <link rel="modulepreload" crossorigin href="/assets/auth.service-B-BoZdmw.js">
   <link rel="modulepreload" crossorigin href="/assets/toast-CErdx8Qf.js">
   <link rel="modulepreload" crossorigin href="/assets/category.service-ILwE1iue.js">
-  <link rel="modulepreload" crossorigin href="/assets/header-BXuXbyNE.js">
-  <link rel="modulepreload" crossorigin href="/assets/product.service-oboCqACv.js">
+  <link rel="modulepreload" crossorigin href="/assets/product.service-WrVGjX6i.js">
+  <link rel="modulepreload" crossorigin href="/assets/header-CchGFl-j.js">
   <link rel="stylesheet" crossorigin href="/assets/style-tn0RQdqM.css">
 </head>
 
@@ -80,10 +82,6 @@
                 class="flex h-12 items-center justify-center rounded-full px-8 bg-primary hover:bg-primary/90 text-white text-base font-bold transition-all shadow-lg shadow-primary/30">
                 Shop Now
               </a>
-              <button
-                class="flex h-12 items-center justify-center rounded-full px-8 bg-[#e2e8f0] dark:bg-[#1e293b] hover:bg-[#e8dcd5] dark:hover:bg-[#4a3b32] text-[#0f172a] dark:text-white text-base font-bold transition-all">
-                Buy Patterns
-              </button>
             </div>
             <div id="hero-products-container"
               class="flex items-center gap-4 mt-0 pt-6 border-t border-[#e2e8f0] dark:border-[#1e293b] min-h-[200px] transition-all duration-700 ease-out opacity-0 translate-y-4">
@@ -94,11 +92,14 @@
             <div
               class="absolute -inset-4 bg-primary/20 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
             </div>
-            <div id="hero-bg-image"
-              class="relative w-full aspect-square bg-cover bg-center rounded-[2rem] shadow-xl overflow-hidden transition-all duration-700 ease-in-out"
-              style='background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuB7FQ3zuv-x21Hv6odsfykUXKADwuJk5ybNW1NepTQJYblAKcZ-_uBhWbVru3joEZ06hOxj0LQ2zZ28dQfqZoR3XVcE_8Ukfsm2ojSZacDLHsV8Ylz4S0aGxZSqufkZW1KK2QbG6C1qWvJunSX5VyB1CtddCpjhuZGyL3kJ1I9N381R7wSgtCVqP8v1V1wlW9As786fOSWcknuEAqsylnLd6iqNcEpKkkG_RPwZcTSC3KB2imA8gKD6qF9_3En_0jwyxHyP0Ll2Gtu_&quot;);'>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-            </div>
+            <a id="hero-bg-link" href="#"
+              class="block relative w-full aspect-square rounded-[2rem] shadow-xl overflow-hidden cursor-pointer">
+              <div id="hero-bg-image"
+                class="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out hover:scale-105"
+                style='background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuB7FQ3zuv-x21Hv6odsfykUXKADwuJk5ybNW1NepTQJYblAKcZ-_uBhWbVru3joEZ06hOxj0LQ2zZ28dQfqZoR3XVcE_8Ukfsm2ojSZacDLHsV8Ylz4S0aGxZSqufkZW1KK2QbG6C1qWvJunSX5VyB1CtddCpjhuZGyL3kJ1I9N381R7wSgtCVqP8v1V1wlW9As786fOSWcknuEAqsylnLd6iqNcEpKkkG_RPwZcTSC3KB2imA8gKD6qF9_3En_0jwyxHyP0Ll2Gtu_&quot;);'>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              </div>
+            </a>
             <!-- Floating Card -->
             <div
               class="absolute -bottom-6 -left-6 md:bottom-8 md:-left-8 bg-white dark:bg-[#1e293b] p-4 rounded-xl shadow-lg max-w-[200px] hidden sm:flex gap-3 items-center animate-bounce duration-[3000ms]">
@@ -114,12 +115,11 @@
         </div>
       </div>
     </div>
-    </div>
-    </div>
-    </div>
+
     <!-- Categories Grid -->
     <section class="w-full max-w-[1440px] px-4 md:px-10 py-12">
-      <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+      <div
+        class="flex flex-col items-center text-center md:flex-row md:justify-between md:items-end md:text-left mb-8 gap-4">
         <div>
           <h3 class="text-2xl font-bold leading-tight tracking-[-0.015em]">Shop by Category</h3>
           <p class="text-gray-500 dark:text-gray-400 mt-1">Find exactly what you're looking for</p>
@@ -218,7 +218,7 @@
             <div class="absolute inset-4 bg-white dark:bg-[#1e293b] rounded-full opacity-60 scale-105"></div>
             <div
               class="absolute inset-0 rounded-full border-4 border-white dark:border-[#1e293b] overflow-hidden shadow-2xl">
-              <img src="/assets/profile-pic1-Dwq-aZEL.png" alt="July" class="w-full h-full object-cover">
+              <img src="/assets/profile-pic1-C-lI3urY.webp" alt="July" class="w-full h-full object-cover">
             </div>
             <!-- Decorative badge -->
             <div
@@ -240,8 +240,8 @@
         <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
         <div class="relative z-10 flex flex-col items-center gap-4">
           <span class="material-symbols-outlined text-4xl text-primary">mail</span>
-          <h2 class="text-2xl md:text-3xl font-bold">Join the Crochet Club</h2>
-          <p class="text-gray-600 dark:text-gray-300 max-w-md mx-auto">Get 15% off your first order, free patterns, and
+          <h2 class="text-2xl md:text-3xl font-bold">Be the first to see what I'm hooking this week.</h2>
+          <p class="text-gray-600 dark:text-gray-300 max-w-md mx-auto">Get 15% off your first order, and
             weekly inspiration delivered to your inbox.</p>
           <form id="newsletter-form" class="mt-4 flex w-full max-w-md flex-col sm:flex-row gap-2">
             <div class="flex-1 flex flex-col gap-1">
@@ -265,36 +265,38 @@
       <div class="max-w-[1440px] mx-auto px-4 md:px-10">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div class="col-span-1 md:col-span-1 flex flex-col gap-4">
-            <div class="flex items-center gap-2 text-primary">
-              <span class="material-symbols-outlined text-3xl">gesture</span>
-              <span class="font-bold text-xl text-[#0f172a] dark:text-white">Crochet Corner</span>
-            </div>
+            <a href="/" class="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
+              <img src="/logo1.jpg" alt="Seven Stitches Logo" class="h-10 w-auto rounded-full" />
+
+              <span class="font-bold text-xl text-[#0f172a] dark:text-white">Seven Stitches</span>
+            </a>
             <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              Bringing warmth and creativity to your home with handmade goods and easy-to-follow patterns.
+              Bringing warmth and creativity to your home with handmade goods.
             </p>
             <div class="flex gap-4 mt-2">
-              <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
-                  class="sr-only">Instagram</span>
+              <a class="text-gray-400 hover:text-primary transition-colors"
+                href="https://www.instagram.com/underthe_sky7/"><span class="sr-only">Instagram</span>
                 <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
                   <path clip-rule="evenodd"
                     d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772 4.902 4.902 0 011.772-1.153c.636-.247 1.363-.416 2.427-.465C9.673 2.013 10.03 2 12.488 2h-.173zm-3.715 14a2.715 2.715 0 110-5.43 2.715 2.715 0 010 5.43zm9.932-8.32a1.065 1.065 0 11-2.13 0 1.065 1.065 0 012.13 0z"
                     fill-rule="evenodd"></path>
                 </svg>
               </a>
-              <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
-                  class="sr-only">Facebook</span>
+              <a class="text-gray-400 hover:text-primary transition-colors"
+                href="https://www.facebook.com/yhoung11"><span class="sr-only">Facebook</span>
                 <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
                   <path clip-rule="evenodd"
                     d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
                     fill-rule="evenodd"></path>
                 </svg>
               </a>
-              <a class="text-gray-400 hover:text-primary transition-colors" href="#"><span
-                  class="sr-only">Pinterest</span>
+              <a class="text-gray-400 hover:text-primary transition-colors"
+                href="https://www.tiktok.com/@julyfranzclaridad?_r=1&_t=ZS-92W1XCMx2kX"><span
+                  class="sr-only">TikTok</span>
                 <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24">
-                  <path clip-rule="evenodd"
-                    d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.399.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.173 0 7.41 2.967 7.41 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"
-                    fill-rule="evenodd"></path>
+                  <path
+                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z">
+                  </path>
                 </svg>
               </a>
             </div>
@@ -302,30 +304,22 @@
           <div class="col-span-1">
             <h4 class="font-bold mb-4">Shop</h4>
             <ul class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <li><a class="hover:text-primary transition-colors" href="#">All Products</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Patterns (PDF)</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Finished Goods</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Yarn &amp; Tools</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Gift Cards</a></li>
+              <li><a class="hover:text-primary transition-colors" href="/pages/shop.html">All Products</a></li>
             </ul>
           </div>
           <div class="col-span-1">
             <h4 class="font-bold mb-4">Support</h4>
             <ul class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <li><a class="hover:text-primary transition-colors" href="#">Help Center</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Shipping &amp; Returns</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Pattern FAQ</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+              <li><a class="hover:text-primary transition-colors" href="/pages/help.html">Help Center</a></li>
+              <li><a class="hover:text-primary transition-colors" href="/pages/contact.html">Contact Me</a></li>
             </ul>
           </div>
           <div class="col-span-1">
             <h4 class="font-bold mb-4">Company</h4>
             <ul class="flex flex-col gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Sustainability</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
-              <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+              <li><a class="hover:text-primary transition-colors" href="/pages/about.html">About</a></li>
+              <li><a class="hover:text-primary transition-colors" href="/pages/terms.html">Terms of Service</a></li>
+              <li><a class="hover:text-primary transition-colors" href="/pages/privacy.html">Privacy Policy</a></li>
             </ul>
           </div>
         </div>
