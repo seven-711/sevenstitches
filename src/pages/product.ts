@@ -2,6 +2,7 @@ import '../style.css';
 import '../components/header';
 import { ProductService } from '../services/product.service';
 import { CartState } from '../state/cart';
+import { WishlistService } from '../services/wishlist.service';
 import { Toast } from '../components/toast';
 
 // Ensure header is registered
@@ -25,7 +26,8 @@ const productId = urlParams.get('id');
             const [product, reviews, ratingData] = await Promise.all([
                 ProductService.getProductById(productId),
                 ReviewService.getReviewsByProduct(productId),
-                ReviewService.getProductRating(productId)
+                ReviewService.getProductRating(productId),
+                WishlistService.init()
             ]);
 
             if (product) {
@@ -125,7 +127,7 @@ const productId = urlParams.get('id');
                                 
                                 ${mainImageHtml.replace('class="w-full h-full object-cover', 'class="w-full h-full object-cover z-10"')}
                                 
-                                <button class="absolute top-6 right-6 z-20 h-11 w-11 flex items-center justify-center bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm">
+                                <button id="wishlist-btn" class="absolute top-6 right-6 z-20 h-11 w-11 flex items-center justify-center bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full text-gray-400 hover:text-red-500 transition-colors shadow-sm">
                                     <span class="material-symbols-outlined text-xl">favorite</span>
                                 </button>
                             </div>
@@ -248,6 +250,35 @@ const productId = urlParams.get('id');
                     CartState.addItem(product, qty);
                     Toast.show('Added to cart!', 'success');
                 });
+
+                // Wishlist Logic
+                const wishlistBtn = document.getElementById('wishlist-btn');
+                if (wishlistBtn) {
+                    const updateHeart = () => {
+                        const isIn = WishlistService.isInWishlist(product.id);
+                        const icon = wishlistBtn.querySelector('span');
+                        if (isIn) {
+                            wishlistBtn.classList.remove('text-gray-400', 'hover:text-red-500');
+                            wishlistBtn.classList.add('text-red-500');
+                            if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+                        } else {
+                            wishlistBtn.classList.add('text-gray-400', 'hover:text-red-500');
+                            wishlistBtn.classList.remove('text-red-500');
+                            if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+                        }
+                    };
+
+                    // Initial State
+                    updateHeart();
+
+                    wishlistBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const wasAdded = await WishlistService.toggleWishlist(product.id);
+                        updateHeart();
+                        Toast.show(wasAdded ? 'Added to favorites' : 'Removed from favorites', 'info');
+                    });
+                }
 
                 buyNowBtn?.addEventListener('click', () => {
                     const qty = parseInt(quantityInput.value) || 1;

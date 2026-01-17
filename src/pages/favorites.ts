@@ -14,40 +14,90 @@ if (!customElements.get('app-header')) {
     });
 }
 
-const favoritesGrid = document.getElementById('favorites-grid');
-const emptyState = document.getElementById('empty-state');
-const countHeader = document.getElementById('favorites-count-header');
+// DOM elements are now selected inside renderFavorites to ensure they exist
+
+// Debug helper
+// Debug helper
+const debugContainer = document.createElement('div');
+debugContainer.className = 'fixed bottom-0 left-0 w-full max-h-40 overflow-auto bg-black/80 text-green-400 text-xs font-mono p-2 z-[9999]';
+// document.body.appendChild(debugContainer);
+
+const log = (msg: string) => {
+    console.log(msg);
+    const line = document.createElement('div');
+    line.textContent = `[Current]: ${msg}`;
+    // debugContainer.appendChild(line);
+};
 
 // Render Function (Reused from Shop with small mods)
 const renderFavorites = async () => {
-    if (!favoritesGrid || !emptyState) return;
+    // Select elements dynamically
+    const favoritesGrid = document.getElementById('favorites-grid');
+    const emptyState = document.getElementById('empty-state');
+    const countHeader = document.getElementById('favorites-count-header');
 
-    const wishlistIds = WishlistService.getWishlist();
+    log('Starting renderFavorites...');
 
-    if (countHeader) {
-        countHeader.textContent = `${wishlistIds.length} items saved`;
-    }
-
-    if (wishlistIds.length === 0) {
-        favoritesGrid.classList.add('hidden');
-        emptyState.classList.remove('hidden');
-        emptyState.classList.add('flex');
+    // Safety check
+    if (!favoritesGrid || !emptyState) {
+        log('Error: Missing DOM elements favorites-grid or empty-state');
+        if (document.readyState === 'loading') {
+            log('DOM loading... retrying shortly');
+            document.addEventListener('DOMContentLoaded', renderFavorites);
+        }
         return;
     }
 
-    favoritesGrid.classList.remove('hidden');
-    emptyState.classList.add('hidden');
-    emptyState.classList.remove('flex');
+    try {
+        await WishlistService.init();
+        log('WishlistService initialized');
+    } catch (e) {
+        log(`Error initializing WishlistService: ${e}`);
+    }
+
+    const wishlistIds = WishlistService.getWishlist();
+    log(`Wishlist IDs found: ${wishlistIds.length} (${wishlistIds.join(', ')})`);
+
+    const showEmptyState = () => {
+        log('Showing Empty State');
+        favoritesGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        if (countHeader) countHeader.textContent = '0 items saved';
+    };
+
+    if (wishlistIds.length === 0) {
+        showEmptyState();
+        return;
+    }
 
     // Fetch Products
     try {
+        log('Fetching products from Supabase...');
         const products = await ProductService.getProductsByIds(wishlistIds);
+        log(`Products fetched: ${products.length}`);
+
+        if (products.length === 0) {
+            // IDs exist but no products found (e.g. all deleted or inactive)
+            showEmptyState();
+            return;
+        }
+
+        if (countHeader) {
+            countHeader.textContent = `${products.length} items saved`;
+        }
+
+        favoritesGrid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
 
         // Fetch ratings
+        log('Fetching ratings...');
         const productsWithRatings = await Promise.all(products.map(async (product: any) => {
             const ratingData = await ReviewService.getProductRating(product.id);
             return { ...product, rating: ratingData };
         }));
+        log('Ratings fetched, rendering grid...');
 
         favoritesGrid.innerHTML = productsWithRatings.map((product: any) => {
             const imageSrc = product.images?.[0] || null;
@@ -101,27 +151,47 @@ const renderFavorites = async () => {
              `;
         }).join('');
 
+        log('Grid InnerHTML updated');
+
         // Attach Event Listeners to Heart Buttons
         document.querySelectorAll('.wishlist-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 const id = btn.getAttribute('data-id');
                 if (id) {
-                    WishlistService.toggleWishlist(id);
+                    await WishlistService.toggleWishlist(id);
                     renderFavorites(); // Re-render to remove item
                 }
             });
         });
 
     } catch (e) {
+        log(`Critical Error: ${e}`);
         console.error('Failed to load favorites', e);
-        favoritesGrid.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading favorites.</p>';
+        favoritesGrid.innerHTML = `<p class="col-span-full text-center text-red-500">Error loading favorites: ${(e as any).message}</p>`;
     }
 };
 
-// Initial Render
-renderFavorites();
 
-// Listen for outside changes (e.g. if we add syncing later, or multiple tabs)
-// window.addEventListener('wishlist-changed', renderFavorites); 
+
+// Initial Render
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderFavorites);
+} else {
+    renderFavorites();
+}
+
+// Listen for updates from other tabs
+window.addEventListener('storage', (e) => {
+    if (e.key === 'sevenstitches_wishlist_v1') {
+        log('Storage event detected (cross-tab sync), refreshing...');
+        renderFavorites();
+    }
+});
+
+// Listen for updates from the same session (if logic elsewhere dispatches this)
+window.addEventListener('wishlist-changed', () => {
+    log('Wishlist-changed event detected, refreshing...');
+    renderFavorites();
+}); 

@@ -170,6 +170,8 @@ export class ProductService {
     static async getProductsByIds(ids: string[]): Promise<Product[]> {
         if (ids.length === 0) return [];
 
+        console.log('Fetching products for wishlist IDs:', ids);
+
         const { data, error } = await supabase
             .from('products')
             .select(`
@@ -179,7 +181,10 @@ export class ProductService {
             .in('id', ids)
             .eq('status', 'active');
 
-        if (error) throw error;
-        return data as Product[];
+        if (error) {
+            console.error('Supabase error fetching favorites:', error);
+            throw error;
+        }
+        return (data || []) as Product[];
     }
 }

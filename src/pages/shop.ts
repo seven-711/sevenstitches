@@ -21,7 +21,10 @@ const productGrid = document.getElementById('product-grid');
 (async () => {
   if (productGrid) {
     try {
-      const products = await ProductService.getProducts();
+      const [products] = await Promise.all([
+        ProductService.getProducts(),
+        WishlistService.init()
+      ]);
 
       // Filter by Search Query
       const urlParams = new URLSearchParams(window.location.search);
@@ -163,7 +166,7 @@ const productGrid = document.getElementById('product-grid');
 
         // Attach Event Listeners to Heart Buttons
         document.querySelectorAll('.wishlist-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
+          btn.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -171,7 +174,7 @@ const productGrid = document.getElementById('product-grid');
             const icon = btn.querySelector('span');
 
             if (id && icon) {
-              const isNowInWishlist = WishlistService.toggleWishlist(id);
+              const isNowInWishlist = await WishlistService.toggleWishlist(id);
 
               // Optimistic UI Update
               if (isNowInWishlist) {

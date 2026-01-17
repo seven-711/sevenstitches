@@ -41,29 +41,12 @@
 </head>
 
 <body class="font-display bg-background-light dark:bg-background-dark text-[#0f172a] dark:text-[#e2e8f0]">
-    <div class="hidden md:block">
-        <app-header></app-header>
-    </div>
-
-    <!-- Mobile Header -->
-    <header
-        class="md:hidden flex flex-col w-full px-6 py-5 sticky top-0 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md z-40 transition-colors border-b border-gray-100 dark:border-gray-800">
-        <div class="flex justify-between items-center w-full">
-            <h1 class="text-2xl font-black tracking-tight">Favorites</h1>
-            <div class="relative">
-                <a href="/pages/cart.html"
-                    class="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <span class="material-symbols-outlined text-[28px]">shopping_bag</span>
-                </a>
-            </div>
-        </div>
-        <p class="text-sm text-gray-500 mt-1" id="favorites-count-header">0 items saved</p>
-    </header>
+    <app-header></app-header>
 
     <main class="flex flex-col items-center w-full min-h-screen">
         <div class="w-full max-w-[1440px] px-4 md:px-10 py-4 md:py-8 lg:py-16 pb-24 md:pb-8">
 
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 hidden md:flex">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 flex">
                 <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">My Favorites</h1>
             </div>
 
@@ -84,29 +67,6 @@
             </div>
         </div>
     </main>
-
-    <!-- Mobile Bottom Navigation -->
-    <div
-        class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-[#0f172a] rounded-[2rem] px-8 py-4 flex justify-between items-center shadow-2xl z-50 ring-1 ring-white/10">
-        <a href="/" class="flex flex-col items-center gap-1 group text-gray-400 hover:text-white transition-colors">
-            <span class="material-symbols-outlined text-[24px]">home</span>
-        </a>
-        <a href="/pages/cart.html"
-            class="flex flex-col items-center gap-1 group text-gray-400 hover:text-white transition-colors relative">
-            <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
-        </a>
-        <!-- Active Notifications/Favorites Tab -->
-        <a href="/pages/favorites.html"
-            class="flex flex-col items-center gap-1 group text-white transition-colors relative">
-            <div class="absolute -inset-3 bg-white/10 rounded-full blur-sm"></div>
-            <span class="material-symbols-outlined text-[28px] text-primary relative z-10"
-                style="font-variation-settings: 'FILL' 1;">favorite</span>
-        </a>
-        <a href="/pages/orders.html"
-            class="flex flex-col items-center gap-1 group text-gray-400 hover:text-white transition-colors">
-            <span class="material-symbols-outlined text-[24px]">person</span>
-        </a>
-    </div>
 
     <script type="module" src="/src/pages/favorites.ts"></script>
 </body>
