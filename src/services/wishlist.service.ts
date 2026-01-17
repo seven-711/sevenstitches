@@ -30,7 +30,39 @@ export class WishlistService {
                     throw error;
                 }
 
-                this.cache = new Set(data?.map(d => d.product_id) || []);
+                const dbIds = new Set(data?.map(d => d.product_id) || []);
+
+                // SYNC: Merge LocalStorage items into DB (if any are missing from DB)
+                // This saves items that were added while offline or when the table was missing.
+                if (!this.useLocalStorageOnly) {
+                    const stored = localStorage.getItem(WISHLIST_LOCAL_KEY);
+                    if (stored) {
+                        try {
+                            const localIds: string[] = JSON.parse(stored);
+                            const toSync = localIds.filter(id => !dbIds.has(id));
+
+                            if (toSync.length > 0) {
+                                console.log(`[Wishlist] Syncing ${toSync.length} offline items to DB...`);
+                                const { error: syncError } = await supabase
+                                    .from('favorites')
+                                    .insert(toSync.map(id => ({ user_id: user.id, product_id: id })));
+
+                                if (syncError) {
+                                    console.error('[Wishlist] Sync failed:', syncError);
+                                } else {
+                                    console.log('[Wishlist] Sync success');
+                                }
+
+                                // Optimistically show them even if sync failed, or (definitely) if sync succeeded
+                                toSync.forEach(id => dbIds.add(id));
+                            }
+                        } catch (e) {
+                            console.error('[Wishlist] Sync parse error:', e);
+                        }
+                    }
+                }
+
+                this.cache = dbIds;
             } else {
                 // Load from LocalStorage
                 this.loadFromLocal();
