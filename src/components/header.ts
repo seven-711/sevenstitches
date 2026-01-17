@@ -103,6 +103,9 @@ export class AppHeader extends HTMLElement {
             <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/orders.html">
                 <span class="material-symbols-outlined">receipt_long</span> Orders
             </a>
+            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/favorites.html">
+                <span class="material-symbols-outlined">favorite</span> Favorites
+            </a>
             <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/about.html">
                 <span class="material-symbols-outlined">info</span> About
             </a>

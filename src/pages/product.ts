@@ -186,7 +186,7 @@ const productId = urlParams.get('id');
                                     <span class="material-symbols-outlined">shopping_bag</span>
                                     Add to Cart
                                 </button>
-                                <button id="buy-now" class="w-full py-2 text-xs font-bold text-gray-400 hover:text-primary transition-colors">
+                                <button id="buy-now" class="w-full h-14 bg-gray-900 dark:bg-white text-white dark:text-black text-base font-bold rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center active:scale-95">
                                     Buy Now (Instant Checkout)
                                 </button>
                             </div>

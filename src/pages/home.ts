@@ -1,5 +1,6 @@
 import { ProductService, Product } from '../services/product.service';
 import { NewsletterService } from '../services/newsletter.service';
+import { Toast } from '../components/toast';
 
 type Theme = {
     name: string;
@@ -333,8 +334,25 @@ async function initHomepage() {
         }
     }
 
-    // Call sub-functions
     loadTrendingProducts();
+
+    // Trending Navigation Logic (Placeholder for static grid)
+    const trendPrevBtn = document.getElementById('trending-prev-btn');
+    const trendNextBtn = document.getElementById('trending-next-btn');
+
+    if (trendPrevBtn) {
+        trendPrevBtn.addEventListener('click', () => {
+            // Since it's a static grid for now, we are always at the "start"
+            Toast.show("You're at the start of the trending list", 'info');
+        });
+    }
+
+    if (trendNextBtn) {
+        trendNextBtn.addEventListener('click', () => {
+            // Since it's a static grid for now, we basically showed everything
+            Toast.show("That's all for the trending", 'info');
+        });
+    }
 
     // Newsletter Logic
     const newsletterForm = document.getElementById('newsletter-form') as HTMLFormElement;
