@@ -1,18 +1,25 @@
 import { AuthService } from '../services/auth.service';
 import { clerk } from '../lib/clerk';
 import { Toast } from './toast';
-
 import { CategoryService } from '../services/category.service';
 import { ProductService } from '../services/product.service';
+import { gsap } from 'gsap';
 
 export class AppHeader extends HTMLElement {
   private products: any[] = [];
+
+  // Staggered Menu Refs
+  private menuWrapper: HTMLElement | null = null;
+  private menuPanel: HTMLElement | null = null;
+  private menuTimeline: gsap.core.Timeline | null = null;
+  private menuOpen = false;
+  private isBusy = false;
 
   constructor() {
     super();
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this.innerHTML = `
       <header class="sticky top-0 z-50 w-full bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-[#e2e8f0] dark:border-[#1e293b]">
         <div class="px-4 md:px-10 py-3 max-w-[1440px] mx-auto flex items-center justify-between gap-4 relative z-50 bg-inherit">
@@ -79,36 +86,11 @@ export class AppHeader extends HTMLElement {
                   </div>
               </div>
 
-              <button id="mobile-menu-btn" class="lg:hidden flex size-10 items-center justify-center rounded-full bg-[#e2e8f0] dark:bg-[#1e293b] hover:bg-primary/10 transition-colors">
+              <button id="mobile-menu-btn" class="lg:hidden flex size-10 items-center justify-center rounded-full bg-[#e2e8f0] dark:bg-[#1e293b] hover:bg-primary/10 transition-colors z-[100] relative">
                 <span class="material-symbols-outlined text-[20px]">menu</span>
               </button>
             </div>
           </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-100 dark:border-gray-800 bg-background-light dark:bg-background-dark p-4 flex-col gap-2 shadow-inner">
-            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/">
-                <span class="material-symbols-outlined">home</span> Home
-            </a>
-            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/shop.html">
-                <span class="material-symbols-outlined">storefront</span> Shop
-            </a>
-            <div class="p-3">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Categories</p>
-                <div id="mobile-categories-list" class="flex flex-col gap-1 pl-2 border-l-2 border-gray-200 dark:border-gray-700">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/orders.html">
-                <span class="material-symbols-outlined">receipt_long</span> Orders
-            </a>
-            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/favorites.html">
-                <span class="material-symbols-outlined">favorite</span> Favorites
-            </a>
-            <a class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-white/5 active:bg-white/80 transition-colors font-medium text-base" href="/pages/about.html">
-                <span class="material-symbols-outlined">info</span> About
-            </a>
         </div>
       </header>
     `;
@@ -116,7 +98,8 @@ export class AppHeader extends HTMLElement {
     this.updateCartCount();
     window.addEventListener('cart-updated', () => this.updateCartCount());
     this.setupAuthListeners();
-    this.setupMobileMenu();
+    this.createStaggeredMenuDOM();
+    this.setupMobileMenuToggle();
     this.loadCategories();
     this.setupSearchListener();
     this.injectChatWidget();
@@ -125,6 +108,224 @@ export class AppHeader extends HTMLElement {
     ProductService.getProducts().then(products => {
       this.products = products;
     }).catch(err => console.error('Failed to load products for search', err));
+  }
+
+  disconnectedCallback() {
+    if (this.menuWrapper && document.body.contains(this.menuWrapper)) {
+      document.body.removeChild(this.menuWrapper);
+    }
+    window.removeEventListener('resize', this.closeMenuIfDesktop);
+  }
+
+  closeMenuIfDesktop = () => {
+    if (window.innerWidth >= 1024 && this.menuOpen) {
+      this.closeMenu();
+    }
+  }
+
+  createStaggeredMenuDOM() {
+    // Create wrapper appended to body
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sm-scope';
+    wrapper.innerHTML = `
+        <div class="staggered-menu-wrapper" data-open="false">
+            <!-- Prelayers -->
+            <div class="sm-prelayers">
+                <div class="sm-prelayer" style="background: #eff6ff;"></div>
+                <div class="sm-prelayer" style="background: #dbeafe;"></div>
+                <div class="sm-prelayer" style="background: #bfdbfe;"></div>
+                <div class="sm-prelayer" style="background: #93c5fd;"></div>
+            </div>
+            
+            <!-- Panel -->
+            <aside class="staggered-menu-panel">
+                <button class="sm-close-btn" aria-label="Close menu">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <div class="sm-panel-inner">
+                    <ul class="sm-panel-list">
+                        <li class="sm-panel-itemWrap">
+                            <a href="/" class="sm-panel-item"><span class="sm-panel-itemLabel">Home</span></a>
+                        </li>
+                         <li class="sm-panel-itemWrap">
+                            <a href="/pages/shop.html" class="sm-panel-item"><span class="sm-panel-itemLabel">Shop</span></a>
+                        </li>
+                        <li class="sm-panel-itemWrap">
+                           <div class="sm-panel-item group relative">
+                              <span class="sm-panel-itemLabel">Categories</span>
+                              <div id="sm-categories-list" class="hidden group-hover:block absolute top-full left-0 bg-white dark:bg-[#1e293b] border border-gray-100 dark:border-gray-800 shadow-xl p-4 rounded-xl z-50 min-w-[200px] flex flex-col gap-2">
+                                <!-- Categories populated dynamically -->
+                              </div>
+                           </div>
+                        </li>
+                        <li class="sm-panel-itemWrap">
+                            <a href="/pages/orders.html" class="sm-panel-item"><span class="sm-panel-itemLabel">Orders</span></a>
+                        </li>
+                        <li class="sm-panel-itemWrap">
+                            <a href="/pages/favorites.html" class="sm-panel-item"><span class="sm-panel-itemLabel">Favorites</span></a>
+                        </li>
+                         <li class="sm-panel-itemWrap">
+                            <a href="/pages/about.html" class="sm-panel-item"><span class="sm-panel-itemLabel">About</span></a>
+                        </li>
+                        <li class="sm-panel-itemWrap">
+                            <a href="/pages/contact.html" class="sm-panel-item"><span class="sm-panel-itemLabel">Contact</span></a>
+                        </li>
+                    </ul>
+
+                    <div class="sm-socials">
+                        <h3 class="sm-socials-title">Follow Us</h3>
+                        <ul class="sm-socials-list">
+                            <li class="sm-socials-item">
+                                <a href="https://www.instagram.com/underthe_sky7/" target="_blank" class="sm-socials-link">Instagram</a>
+                            </li>
+                             <li class="sm-socials-item">
+                                <a href="https://www.facebook.com/yhoung11" target="_blank" class="sm-socials-link">Facebook</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+      `;
+    document.body.appendChild(wrapper);
+    this.menuWrapper = wrapper.querySelector('.staggered-menu-wrapper');
+    this.menuPanel = wrapper.querySelector('.staggered-menu-panel');
+
+    // Initial GSAP Set state
+    if (this.menuWrapper) {
+      const preLayers = this.menuWrapper.querySelectorAll('.sm-prelayer');
+      // this.menuPanel is already set
+      const items = this.menuWrapper.querySelectorAll('.sm-panel-itemLabel');
+      const socials = this.menuWrapper.querySelectorAll('.sm-socials-link');
+
+      // Correct initial positions
+      if (this.menuPanel) {
+        gsap.set([this.menuPanel, ...Array.from(preLayers)], { xPercent: 100 });
+      }
+      gsap.set(items, { yPercent: 100 });
+      gsap.set(socials, { opacity: 0, y: 10 });
+    }
+
+    // Add click listeners to links to auto-close
+    const links = wrapper.querySelectorAll('a');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        this.closeMenu();
+      });
+    });
+
+    const closeBtn = wrapper.querySelector('.sm-close-btn');
+    closeBtn?.addEventListener('click', () => {
+      this.closeMenu();
+    });
+
+    window.addEventListener('resize', this.closeMenuIfDesktop);
+  }
+
+  setupMobileMenuToggle() {
+    const btn = this.querySelector('#mobile-menu-btn');
+    btn?.addEventListener('click', () => {
+      if (this.isBusy) return;
+
+      if (this.menuOpen) {
+        this.closeMenu();
+      } else {
+        this.openMenu();
+      }
+    });
+  }
+
+  openMenu() {
+    if (this.isBusy || !this.menuWrapper) return;
+    this.isBusy = true;
+    this.menuOpen = true;
+
+    // Update Button Icon
+    const btnIcon = this.querySelector('#mobile-menu-btn span');
+    if (btnIcon) btnIcon.textContent = 'close';
+
+    // GSAP Animation
+    const preLayers = Array.from(this.menuWrapper.querySelectorAll('.sm-prelayer'));
+    const panel = this.menuPanel!;
+    const itemLabels = this.menuWrapper.querySelectorAll('.sm-panel-itemLabel');
+
+    const socials = this.menuWrapper.querySelectorAll('.sm-socials-link');
+
+    this.menuTimeline?.kill();
+    this.menuTimeline = gsap.timeline({
+      onComplete: () => { this.isBusy = false; }
+    });
+
+    // 1. Layers Wipe
+    preLayers.forEach((layer, i) => {
+      this.menuTimeline!.to(layer, {
+        xPercent: 0,
+        duration: 0.8,
+        ease: 'power4.out'
+      }, i * 0.1);
+    });
+
+    // 2. Panel Slide
+    this.menuTimeline.to(panel, {
+      xPercent: 0,
+      duration: 0.8,
+      ease: 'power4.out'
+    }, 0.4);
+
+    // 3. Items Stagger
+    this.menuTimeline.fromTo(itemLabels,
+      { yPercent: 100, rotate: 5 },
+      { yPercent: 0, rotate: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1 },
+      0.6
+    );
+
+    // 4. Socials
+    this.menuTimeline.to(socials, {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.1
+    }, 0.8);
+
+
+
+
+    this.menuWrapper.setAttribute('data-open', 'true');
+    this.menuWrapper.style.pointerEvents = 'auto';
+  }
+
+  closeMenu() {
+    if (this.isBusy || !this.menuWrapper) return;
+    this.isBusy = true;
+    this.menuOpen = false;
+
+    // Update Button Icon
+    const btnIcon = this.querySelector('#mobile-menu-btn span');
+    if (btnIcon) btnIcon.textContent = 'menu';
+
+    const preLayers = Array.from(this.menuWrapper.querySelectorAll('.sm-prelayer'));
+    const panel = this.menuPanel!;
+
+    this.menuTimeline?.kill();
+    this.menuTimeline = gsap.timeline({
+      onComplete: () => {
+        this.isBusy = false;
+        this.menuWrapper?.setAttribute('data-open', 'false');
+        // Reset items for next open
+        const itemLabels = this.menuWrapper?.querySelectorAll('.sm-panel-itemLabel');
+        if (itemLabels) gsap.set(itemLabels, { yPercent: 100 });
+      }
+    });
+
+    // Close animation (reverse-ish)
+    this.menuTimeline.to([panel, ...preLayers], {
+      xPercent: 100,
+      duration: 0.6,
+      ease: 'power3.in',
+      stagger: {
+        amount: 0.2
+      }
+    });
   }
 
   injectChatWidget() {
@@ -207,30 +408,13 @@ export class AppHeader extends HTMLElement {
     }
   }
 
-  setupMobileMenu() {
-    const btn = this.querySelector('#mobile-menu-btn');
-    const menu = this.querySelector('#mobile-menu');
-
-    btn?.addEventListener('click', () => {
-      const isHidden = menu?.classList.contains('hidden');
-      if (isHidden) {
-        menu?.classList.remove('hidden');
-        menu?.classList.add('flex');
-        btn.querySelector('span')!.textContent = 'close';
-      } else {
-        menu?.classList.add('hidden');
-        menu?.classList.remove('flex');
-        btn.querySelector('span')!.textContent = 'menu';
-      }
-    });
-  }
-
   async loadCategories() {
     const listContainer = this.querySelector('#header-categories-list');
-    const mobileListContainer = this.querySelector('#mobile-categories-list');
 
-    // Initial loading state
-    if (!listContainer && !mobileListContainer) return;
+    // Also load categories into the staggered menu if possible, but for now we hardcoded main links
+    // If we want dynamic categories in StaggeredMenu, we'd append them there.
+
+    if (!listContainer) return;
 
     try {
       const categories = await CategoryService.getCategories();
@@ -244,13 +428,17 @@ export class AppHeader extends HTMLElement {
         : '<span class="block px-3 py-2 text-xs text-gray-400">No categories</span>';
 
       if (listContainer) listContainer.innerHTML = linksHtml;
-      if (mobileListContainer) mobileListContainer.innerHTML = linksHtml;
+
+      // Update staggered menu category list
+      if (this.menuWrapper) {
+        const mobileListContainer = this.menuWrapper.querySelector('#sm-categories-list');
+        if (mobileListContainer) mobileListContainer.innerHTML = linksHtml;
+      }
 
     } catch (e) {
       console.error('Header categories error', e);
       const errorHtml = '<span class="block px-3 py-2 text-xs text-red-400">Error loading</span>';
       if (listContainer) listContainer.innerHTML = errorHtml;
-      if (mobileListContainer) mobileListContainer.innerHTML = errorHtml;
     }
   }
 

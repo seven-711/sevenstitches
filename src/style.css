@@ -1,1 +1,215 @@
 /* CSS cleared for Tailwind integration */
+
+/* Staggered Menu Styles */
+.sm-scope {
+  --sm-accent: #2563eb;
+  --sm-bg: #ffffff;
+  --sm-text: #0f172a;
+}
+
+.dark .sm-scope {
+  --sm-bg: #0f172a;
+  --sm-text: #f8fafc;
+}
+
+.sm-scope .staggered-menu-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.sm-scope .staggered-menu-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--sm-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+  overflow-y: auto;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.sm-scope .sm-close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sm-text);
+  transition: background 0.2s, color 0.2s;
+  z-index: 20;
+}
+
+.sm-scope .sm-close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--sm-accent);
+}
+
+.dark .sm-scope .sm-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+  .sm-scope .staggered-menu-panel {
+    width: clamp(300px, 40vw, 500px);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .sm-scope .staggered-menu-panel {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.sm-scope .sm-prelayers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@media (min-width: 768px) {
+  .sm-scope .sm-prelayers {
+    width: clamp(300px, 40vw, 500px);
+  }
+}
+
+.sm-scope .sm-prelayer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  transform: translateX(0);
+}
+
+.sm-scope .sm-panel-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sm-scope .sm-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sm-scope .sm-panel-itemWrap {
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.sm-scope .sm-panel-item {
+  position: relative;
+  color: var(--sm-text);
+  font-weight: 700;
+  font-size: 3rem;
+  cursor: pointer;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  transition: color 0.25s;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.sm-scope .sm-panel-itemLabel {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: 50% 100%;
+}
+
+.sm-scope .sm-panel-item:hover {
+  color: var(--sm-accent);
+}
+
+/* Removed numbered indicators */
+
+.sm-scope .sm-socials {
+  margin-top: auto;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sm-scope .sm-socials-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--sm-accent);
+}
+
+.sm-scope .sm-socials-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sm-scope .sm-socials-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--sm-text);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* SM Category Dropdown */
+.sm-scope .sm-panel-item.group:hover #sm-categories-list {
+  display: flex !important;
+}
+
+.sm-scope #sm-categories-list {
+  min-width: 250px;
+}
+
+.sm-scope #sm-categories-list a {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #1e293b;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.dark .sm-scope #sm-categories-list a {
+  color: #cbd5e1;
+}
+
+.sm-scope #sm-categories-list a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--sm-accent);
+}
+
+.dark .sm-scope #sm-categories-list a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
