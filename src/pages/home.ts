@@ -87,6 +87,8 @@ async function initHomepage() {
     const heroBadgeText = document.getElementById('hero-badge-text');
     const heroBadgeIcon = document.getElementById('hero-badge-icon');
     const heroShopBtn = document.getElementById('hero-shop-btn') as HTMLAnchorElement;
+    const heroScrollLeft = document.getElementById('hero-scroll-left');
+    const heroScrollRight = document.getElementById('hero-scroll-right');
 
     if (!heroProductsContainer) {
         console.error('Hero products container not found! Check index.html IDs.');
@@ -147,6 +149,24 @@ async function initHomepage() {
 
         if (heroDescription) {
             heroDescription.textContent = product.description || 'Discover unique crochet patterns for makers and finished handmade goods for warmth seekers.';
+        }
+
+        // Auto-fit text to container
+        const heroTextContainer = document.getElementById('hero-text-container');
+        if (heroTextContainer && heroTitle) {
+            // Reset to allow natural sizing first
+            heroTitle.style.fontSize = '';
+            heroTitle.style.lineHeight = '';
+
+            // Check for overflow and shrink if needed
+            let currentSize = parseFloat(window.getComputedStyle(heroTitle).fontSize);
+            const minSize = 24; // Don't go smaller than this
+
+            while (heroTextContainer.scrollHeight > heroTextContainer.clientHeight && currentSize > minSize) {
+                currentSize -= 2;
+                heroTitle.style.fontSize = `${currentSize}px`;
+                heroTitle.style.lineHeight = '1.1'; // Keep line height tight
+            }
         }
 
         const heroFloatingTitle = document.getElementById('hero-floating-title');
@@ -252,6 +272,17 @@ async function initHomepage() {
                     }
                 }
             });
+
+            // Hero Scroll Logic
+            if (heroScrollLeft && heroScrollRight) {
+                heroScrollLeft.addEventListener('click', () => {
+                    heroProductsContainer.scrollBy({ left: -150, behavior: 'smooth' });
+                });
+
+                heroScrollRight.addEventListener('click', () => {
+                    heroProductsContainer.scrollBy({ left: 150, behavior: 'smooth' });
+                });
+            }
             // Removed +N "More" indicator logic as we show all now.
 
             // Animation

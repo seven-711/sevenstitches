@@ -43,6 +43,21 @@
       },
     }
   </script>
+  <style>
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .mask-gradient-x {
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+  </style>
 </head>
 
 <body class="font-display bg-background-light dark:bg-background-dark text-[#0f172a] dark:text-[#e2e8f0]">
@@ -53,7 +68,7 @@
       <div class="@container">
         <div class="flex flex-col-reverse gap-8 lg:flex-row lg:items-start">
           <div class="flex flex-col gap-6 lg:w-1/2 lg:pr-12">
-            <div class="flex flex-col gap-4">
+            <div id="hero-text-container" class="flex flex-col gap-4 h-[400px] justify-center overflow-hidden">
               <div id="hero-badge"
                 class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 w-fit transition-colors duration-300">
                 <span id="hero-badge-icon"
@@ -80,9 +95,23 @@
                 Shop Now
               </a>
             </div>
-            <div id="hero-products-container"
-              class="flex items-center gap-4 mt-0 pt-6 border-t border-[#e2e8f0] dark:border-[#1e293b] min-h-[200px] transition-all duration-700 ease-out opacity-0 translate-y-4">
-              <!-- Dynamic Content -->
+            <div class="relative group mt-0 pt-6 border-t border-[#e2e8f0] dark:border-[#1e293b]">
+              <button id="hero-scroll-left"
+                class="absolute -left-3 top-1/2 md:translate-y-0 translate-y-[-50%] z-10 size-8 bg-white dark:bg-slate-800 shadow-lg rounded-full flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 cursor-pointer hover:scale-110 duration-200"
+                aria-label="Scroll left">
+                <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+              </button>
+
+              <div id="hero-products-container"
+                class="flex items-center gap-4 min-h-[100px] transition-all duration-700 ease-out opacity-0 translate-y-4 overflow-x-auto scrollbar-hide px-1 py-4 -my-4 mask-gradient-x">
+                <!-- Dynamic Content -->
+              </div>
+
+              <button id="hero-scroll-right"
+                class="absolute -right-3 top-1/2 md:translate-y-0 translate-y-[-50%] z-10 size-8 bg-white dark:bg-slate-800 shadow-lg rounded-full flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 cursor-pointer hover:scale-110 duration-200"
+                aria-label="Scroll right">
+                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+              </button>
             </div>
           </div>
           <div class="lg:w-1/2 relative group">
@@ -99,13 +128,13 @@
             </a>
             <!-- Floating Card -->
             <div
-              class="absolute -bottom-6 -left-6 md:bottom-8 md:-left-8 bg-white dark:bg-[#1e293b] p-4 rounded-xl shadow-lg max-w-[200px] hidden sm:flex gap-3 items-center animate-bounce duration-[3000ms]">
-              <div class="size-12 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                <span id="hero-floating-icon" class="material-symbols-outlined text-primary">download</span>
+              class="absolute -bottom-6 -left-6 md:bottom-8 md:-left-8 bg-white dark:bg-[#1e293b] p-3 rounded-xl shadow-lg max-w-[160px] hidden sm:flex gap-2 items-center animate-bounce duration-[3000ms]">
+              <div class="size-8 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                <span id="hero-floating-icon" class="material-symbols-outlined text-primary text-[18px]">download</span>
               </div>
               <div>
-                <p id="hero-floating-subtitle" class="text-xs text-gray-500 dark:text-gray-400">Best Seller</p>
-                <p id="hero-floating-title" class="font-bold text-sm">Instant PDF Download</p>
+                <p id="hero-floating-title" class="font-bold text-xs leading-tight line-clamp-2">Crochet Pattern</p>
+                <p id="hero-floating-subtitle" class="text-[10px] text-gray-500 dark:text-gray-400">Best Seller</p>
               </div>
             </div>
           </div>
