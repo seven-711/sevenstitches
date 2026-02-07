@@ -31,7 +31,7 @@
   background: var(--sm-bg);
   display: flex;
   flex-direction: column;
-  padding: 2em;
+  padding: 4em 3em;
   overflow-y: auto;
   z-index: 10;
   pointer-events: auto;
@@ -104,7 +104,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 2.5rem;
 }
 
 .sm-scope .sm-panel-list {
@@ -113,7 +113,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1.0rem;
 }
 
 .sm-scope .sm-panel-itemWrap {
@@ -125,8 +125,9 @@
 .sm-scope .sm-panel-item {
   position: relative;
   color: var(--sm-text);
-  font-weight: 700;
-  font-size: 3rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  line-height: 1.2;
   cursor: pointer;
   line-height: 1.1;
   letter-spacing: -1px;

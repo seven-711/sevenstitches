@@ -311,6 +311,7 @@ export class AppHeader extends HTMLElement {
       onComplete: () => {
         this.isBusy = false;
         this.menuWrapper?.setAttribute('data-open', 'false');
+        if (this.menuWrapper) this.menuWrapper.style.pointerEvents = 'none';
         // Reset items for next open
         const itemLabels = this.menuWrapper?.querySelectorAll('.sm-panel-itemLabel');
         if (itemLabels) gsap.set(itemLabels, { yPercent: 100 });
